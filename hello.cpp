@@ -1,5 +1,13 @@
 #include <iostream>
 using namespace std;
+class b
+{
+  public:
+  b()
+  {
+   cout<<"hello world.\n";
+  }
+};
 int main()
 {
    cout<<"hello world"<<endl;
@@ -12,6 +20,7 @@ int main()
    cout<<"enter a:";
    cin>>a;
    cout<<a<<endl;
+   b B;
    return 0;
 }
 
