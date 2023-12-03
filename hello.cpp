@@ -1,26 +1,52 @@
 #include <iostream>
+#include <fstream>
+#include <string>
 using namespace std;
-class b
+class Student
 {
+  string name;
+  string rollnumber;
+  int age;
+  string contactno;
   public:
-  b()
+};
+class Course
+{
+  string code;
+  string name;
+  int credits;
+  int capacity;
+  Student *students;
+  public:
+  
+};
+class System
+{
+   public:
+   System(){ }
+   void choice()
+   {
+  int choice1;
+  cout<< "1- Enroll a student.\n";
+  cout<< "2- Course Registration.\n";
+  cout<< "3- Attendence.\n";
+  cout<< "4- Marks.\n";
+  cout<< "5- Course withdraw.\n";
+  cout<< "6- Exit\n";
+  cout<<"\n\n";
+  cout<<"ENTER YOUR CHOICE:";
+  cin>>choice1;
+  while(choice1<1 || choice1 >6)
   {
-   cout<<"hello world.\n";
+    cout<<"ENTER CORRECT CHOICE:";
+    cin>>choice1;
   }
+   }
+   ~System(){ }
 };
 int main()
 {
-   cout<<"hello world"<<endl;
-   for(int i=0; i<5; i++)
-   {
-    cout<<i+5<<" ";
-   }
-   cout<<endl;
-   int a;
-   cout<<"enter a:";
-   cin>>a;
-   cout<<a<<endl;
-   b B;
+
    return 0;
 }
 
