@@ -8,6 +8,10 @@ int main()
     cout<<i+5<<" ";
    }
    cout<<endl;
+   int a;
+   cout<<"enter a:";
+   cin>>a;
+   cout<<a<<endl;
    return 0;
 }
 
