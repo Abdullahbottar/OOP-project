@@ -1,6 +1,7 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <cstring>
 using namespace std;
 
 class Course;
@@ -48,13 +49,17 @@ class Validator:public Student
               string rollno;
               int marks;
               cout<<"Enter Student Name:";
-              getline(cin,name);
+              getline(cin>>ws,name);
               cout<<"Enter Student Age:";
               cin>>age;
               cout<<"Enter Student Roll number:";
-              getline(cin,rollno);
+              getline(cin>>ws,rollno);
               cout<<"Enter Student Contactno:";
-              getline(cin,contactno);
+              getline(cin>>ws,contactno);
+              cout<<name<<endl;
+              cout<<age<<endl;
+              cout<<rollno<<endl;
+              cout<<contactno<<endl;
               //Student::
 
         }
@@ -76,6 +81,7 @@ class System:public Validator
      cout<<"\n\n";
      cout<<"ENTER YOUR CHOICE:";
      Validator::input(choice,1,6);
+     system("cls");
      if (choice ==1)
       {
         System::enroll();
@@ -98,7 +104,7 @@ class System:public Validator
       }
      if(choice ==6)
       {
-                                                //exiting
+      	system("cls");                                          //exiting
       }
    }
   void enroll()
@@ -112,6 +118,7 @@ class System:public Validator
     cout<<"ENTER YOUR CHOICE:"; 
     int choice;
     Validator::input(choice,1,5); 
+    system("cls");
     if(choice ==1)
      {
 
@@ -138,9 +145,11 @@ class System:public Validator
     cout<< "1- Available Courses.\n";
     cout<< "2- Registered Courses.\n";
     cout<< "3- Back\n";
+    cout<<"\n\n";
     cout<<"ENTER YOUR CHOICE:"; 
     int choice;
     Validator::input(choice,1,3); 
+    system("cls");
     if(choice ==1)
     {
 
@@ -159,9 +168,11 @@ class System:public Validator
     cout<< "1- Available Courses.\n";
     cout<< "2- Registered Courses.\n";
     cout<< "3- Back\n";
+    cout<<"\n\n";
     cout<<"ENTER YOUR CHOICE:"; 
     int choice;
-    Validator::input(choice,1,3); 
+    Validator::input(choice,1,3);
+    system("cls"); 
     if(choice ==1)
      {
 
@@ -180,9 +191,11 @@ class System:public Validator
    cout<< "1- Enrolled Courses.\n";
    cout<< "2- Drop Course.\n";
    cout<< "3- Back\n";
+   cout<<"\n\n";
    cout<<"ENTER YOUR CHOICE:"; 
    int choice;
    Validator::input(choice,1,3); 
+   system("cls");
    if(choice ==1)
     {
 
