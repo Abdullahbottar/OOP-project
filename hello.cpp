@@ -25,12 +25,12 @@ class Course
   public:
   
 };
-class Validator
+class Validator:public Student
 {
   public:
         Validator(){ }
         
-        int input(int choice,int ll,int ul)
+        int input(int &choice,int ll,int ul)
         {
           cin>>choice;
          while(choice<ll || choice >ul)
@@ -40,9 +40,27 @@ class Validator
           }
           return choice;
         }
+        void enroll()
+        {
+              string name;
+              string contactno;
+              int age;
+              string rollno;
+              int marks;
+              cout<<"Enter Student Name:";
+              getline(cin,name);
+              cout<<"Enter Student Age:";
+              cin>>age;
+              cout<<"Enter Student Roll number:";
+              getline(cin,rollno);
+              cout<<"Enter Student Contactno:";
+              getline(cin,contactno);
+              //Student::
+
+        }
 
 };
-class System
+class System:public Validator
 {
    public:
    System(){ }
@@ -57,8 +75,7 @@ class System
   cout<< "6- Exit\n";
   cout<<"\n\n";
   cout<<"ENTER YOUR CHOICE:";
-  Validator obj;
-  choice=obj.input(choice,1,6);
+  Validator::input(choice,1,6);
   if (choice ==1)
   {
     System::enroll();
@@ -81,20 +98,40 @@ class System
   }
   if(choice ==6)
   {
-
+   
   }
    }
   void enroll()
   {
-    string name;
-    string contactno;
-    int age;
-    string rollno;
-    int marks;
-    cout<<"Enter Student Name:";
-    cout<<"Enter Student Age:";
-    cout<<"Enter Student Roll number:";
-    cout<<"Enter Student:";
+  cout<< "1- Display Already Enrolled Students.\n";
+  cout<< "2- Add a Student.\n";
+  cout<< "3- Remove a Student.\n";
+  cout<< "4- Edit Student Detail.\n";
+  cout<< "5- Exit\n";
+  cout<<"\n\n";
+  cout<<"ENTER YOUR CHOICE:"; 
+  int choice;
+  Validator::input(choice,1,5); 
+  if(choice ==1)
+  {
+
+  }
+  if(choice==2)
+  {
+   Validator::enroll();
+  }
+  if(choice==3)
+  {
+
+  }
+  if(choice ==4)
+  {
+
+  }
+  if(choice ==5)
+  {
+   System::Menu();
+  } 
   }
    ~System(){ }
 };
