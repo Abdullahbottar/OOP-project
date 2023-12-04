@@ -92,7 +92,7 @@ class System:public Validator
       }
      if(choice==3)
       {
-                                                //attendance
+        System::checkattend();                                        //attendance
       }
      if(choice ==4)
       {
@@ -137,6 +137,7 @@ class System:public Validator
      }
     if(choice ==5)
      {
+      system("cls");
       System::Menu();
      } 
   }
@@ -160,6 +161,7 @@ class System:public Validator
     }
     if(choice==3)
     {
+      system("cls");
       System::Menu();
     }
   }
@@ -183,6 +185,7 @@ class System:public Validator
     }
    if(choice==3)
     {
+     system("cls");
      System::Menu();
     }
   }
@@ -206,10 +209,35 @@ class System:public Validator
     }
    if(choice==3)
     {
+     system("cls");
      System::Menu();
     }   
   }
+  void checkattend()
+  {
+   cout<< "1- Check Attendence.\n";
+   cout<< "2- Mark Attendence.\n";
+   cout<< "3- Back\n";
+   cout<<"\n\n";
+   cout<<"ENTER YOUR CHOICE:"; 
+   int choice;
+   Validator::input(choice,1,3); 
+   system("cls");
+    if(choice ==1)
+    {
 
+    }
+   if(choice==2)
+    {
+
+    }
+   if(choice==3)
+    {
+     system("cls");
+     System::Menu();
+    }  
+   system("cls");  
+  }
 
 
 
