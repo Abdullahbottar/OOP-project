@@ -2,9 +2,20 @@
 #include <fstream>
 #include <string>
 #include <cstring>
+#include <conio.h>
+#include <iomanip>
 using namespace std;
 
 class Course;
+class Filehandler
+{
+public:
+    void enroll(string name, string rollno, string contactno, int age)
+    {
+        fstream outfile("students.txt", ios::app);
+        outfile << name << "\t" << rollno << "   " << age << "\t" << contactno << endl;
+    }
+};
 class Student
 {
   string name;
@@ -32,7 +43,38 @@ class Student
           this->rollnumber=rollnumber;
           this->contactno=contactno;
         }
-
+       void setname(string name)
+        {
+          this->name = name;
+        }
+       string getname()
+        {
+          return name;
+        }
+       void setrollnumber(string rollnumber)
+        {
+          this->rollnumber = rollnumber;
+        }
+       string getrollnumber()
+        {
+          return rollnumber;
+        }
+       void setcontactno(string contactno)
+        {
+          this->contactno = contactno;
+        }
+       string getcontactno()
+        {
+          return contactno;
+        }
+       void setage(int age)
+        {
+          this->age = age;
+        }
+       int getage()
+        {
+          return age;
+        }
 };
 class Course
 {
@@ -45,11 +87,26 @@ class Course
   public:
   
 };
-class Validator:public Student
+class Validator:public Student,public Filehandler
 {
+  Student * student;
+  Course *course;
+  static int ssize;
+  static int csize;
   public:
-        Validator(){ }
-        
+        Validator()
+        {
+          student=nullptr;
+          course= nullptr;
+        }
+        static void ssizeinc() //student size increment
+        {
+           ssize++;
+        }
+        static void csizeinc()  //course size increment
+        {
+           csize++;
+        }
         int input(int &choice,int ll,int ul)
         {
           cin>>choice;
@@ -75,7 +132,39 @@ class Validator:public Student
               getline(cin>>ws,rollno);
               cout<<"Enter Student Contactno:";
               getline(cin>>ws,contactno);
-              Student::enroll(name,rollno,age,contactno);            //enrolling a student;
+              if(student== nullptr)
+              {
+                student= new Student[ssize+1];
+                student[ssize].enroll(name,rollno,age,contactno);
+                ssizeinc();
+              }          //enrolling a student;
+              else
+              {
+                Student* copystudent = new Student[ssize + 1];
+                for (int i = 0; i < ssize; i++)
+                {
+                   copystudent[i].setname(student[i].getname());
+                   copystudent[i].setrollnumber(student[i].getrollnumber());
+                   copystudent[i].setage(student[i].getage());
+                   copystudent[i].setcontactno(student[i].getcontactno());
+                }
+                copystudent[ssize].setname(name);
+                copystudent[ssize].setage(age);
+                copystudent[ssize].setcontactno(contactno);
+                copystudent[ssize].setrollnumber(rollno);
+                ssizeinc();
+                delete[] student;
+                student = new Student[ssize];
+                student = copystudent;
+              }
+              Filehandler::enroll(name, rollno,contactno,age);
+              char a;
+              cout << "PRESS SPACE TO CONTINUE." << endl;
+              a = _getch();
+              while (a != ' ')
+              {
+                a = _getch();
+              }
               cout<<name<<endl;
               cout<<age<<endl;
               cout<<rollno<<endl;
@@ -85,6 +174,8 @@ class Validator:public Student
         }
 
 };
+int Validator::csize=0;
+int Validator::ssize=0;
 class System:public Validator
 {
    public:
@@ -293,9 +384,7 @@ class System:public Validator
 
    ~System(){ }
 };
-class Filehandler
-{
-};
+
 
 int main()
 {
