@@ -12,8 +12,27 @@ class Student
   int age;
   string contactno;
   Course * courses;
-  int marks;    //to be determined
+  float marks;    //to be determined
+  float attendence;
   public:
+        Student()
+        {
+          name="0";
+          rollnumber="0";
+          age=0;
+          contactno="0";
+          marks=0;
+          attendence=0;
+          courses=nullptr;
+        }
+        void enroll(string name,string rollnumber,int age,string contactno)
+        {
+          this->name=name;
+          this->age=age;
+          this->rollnumber=rollnumber;
+          this->contactno=contactno;
+        }
+
 };
 class Course
 {
@@ -56,6 +75,7 @@ class Validator:public Student
               getline(cin>>ws,rollno);
               cout<<"Enter Student Contactno:";
               getline(cin>>ws,contactno);
+              Student::enroll(name,rollno,age,contactno);            //enrolling a student;
               cout<<name<<endl;
               cout<<age<<endl;
               cout<<rollno<<endl;
@@ -122,21 +142,33 @@ class System:public Validator
     if(choice ==1)
      {
 
+
+
+
+      system("cls");
+      System::enroll();
      }
     if(choice==2)
      {
       Validator::enroll();
+      system("cls");
+      System::enroll();
      }
     if(choice==3)
      {
 
+      system("cls");
+      System::enroll();
      }
     if(choice ==4)
      {
 
+      system("cls");
+      System::enroll();
      }
     if(choice ==5)
      {
+
       system("cls");
       System::Menu();
      } 
@@ -154,10 +186,14 @@ class System:public Validator
     if(choice ==1)
     {
 
+      system("cls");
+      System::coursereg();
     }
     if(choice==2)
     {
 
+      system("cls");
+      System::coursereg(); 
     }
     if(choice==3)
     {
@@ -167,8 +203,8 @@ class System:public Validator
   }
   void marksassign()
   {
-    cout<< "1- Available Courses.\n";
-    cout<< "2- Registered Courses.\n";
+    cout<< "1- Display Marks.\n";
+    cout<< "2- Assign Marks.\n";
     cout<< "3- Back\n";
     cout<<"\n\n";
     cout<<"ENTER YOUR CHOICE:"; 
@@ -178,10 +214,14 @@ class System:public Validator
     if(choice ==1)
      {
 
+      system("cls");
+      System::marksassign();
      }
     if(choice==2)
     {
 
+      system("cls");
+      System::marksassign();
     }
    if(choice==3)
     {
@@ -202,10 +242,14 @@ class System:public Validator
    if(choice ==1)
     {
 
+      system("cls");
+      System::coursewith();
     }
    if(choice==2)
     {
 
+      system("cls");
+      System::coursewith();
     }
    if(choice==3)
     {
@@ -226,10 +270,14 @@ class System:public Validator
     if(choice ==1)
     {
 
+      system("cls");
+      System::checkattend();
     }
    if(choice==2)
     {
 
+      system("cls");
+      System::checkattend();
     }
    if(choice==3)
     {
