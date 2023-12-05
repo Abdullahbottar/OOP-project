@@ -5,7 +5,7 @@
 #include <conio.h>
 #include <iomanip>
 using namespace std;
-
+void moveon();
 class Course;
 class Filehandler
 {
@@ -14,6 +14,42 @@ public:
     {
         fstream outfile("students.txt", ios::app);
         outfile << name << "\t" << rollno << "   " << age << "\t" << contactno << endl;
+        outfile.close();
+    }
+    void display()
+    {
+        ifstream infile("students.txt");
+        cout << "NAME" << "\t\t\t" << "ROLL NUMBER" << "\t\t" << "AGE" << "\t\t" << "CONTACT INFORMATION\n";
+        string name, rollno;
+        string contactinfo,sname;
+        int age;
+        while (infile >> name >>sname>> rollno >> age >> contactinfo)
+         {
+           cout << name<<" "<<sname << "\t\t" << rollno << "\t\t" << age << "\t\t" << contactinfo << endl;
+         }
+        moveon();
+        infile.close();
+    }
+    void remove(string name, string rollno, string contactno, int age)
+    {
+        ofstream outfile("students.txt",ios::app);
+        outfile << name << "\t" << rollno << "   " << age << "\t" << contactno << endl;
+    }
+    void clear()
+    {
+        ofstream outfile("students.txt",ios::trunc);
+        outfile.close();
+    }
+    static int sizeset()
+    {
+        fstream infile("students.txt", ios::in);
+        int linecount = 0;
+        string line;
+        while (getline(infile, line))
+        {
+            linecount++;
+        }
+        return linecount;
     }
 };
 class Student
@@ -107,6 +143,10 @@ class Validator:public Student,public Filehandler
         {
            csize++;
         }
+        static void ssizedec() //student size decrement
+        {
+           ssize--;
+        }
         int input(int &choice,int ll,int ul)
         {
           cin>>choice;
@@ -119,11 +159,28 @@ class Validator:public Student,public Filehandler
         }
         void enroll()
         {
-              string name="0";
-              string contactno;
-              int age;
-              string rollno;
-              int marks;
+           string name = "0";
+           string contactno;
+           int age;
+           string rollno;
+           int marks;
+           string sname;
+           ssize = Filehandler::sizeset();
+           student = new Student[ssize];
+           ifstream infile("students.txt");
+           int i = 0;
+           while (infile >> name >> sname >> rollno >> age >> contactno)
+              {
+                student[i].setage(age);
+                student[i].setcontactno(contactno);
+                student[i].setrollnumber(rollno);
+                string space = " ";
+                name.append(space);
+                name.append(sname);
+                student[i].setname(name);
+                i++;
+              }
+              infile.close();         
               cout<<"Enter Student Name:";
               getline(cin>>ws,name);
               cout<<"Enter Student Age:";
@@ -141,7 +198,7 @@ class Validator:public Student,public Filehandler
               else
               {
                 Student* copystudent = new Student[ssize + 1];
-                for (int i = 0; i < ssize; i++)
+                for (i = 0; i < ssize; i++)
                 {
                    copystudent[i].setname(student[i].getname());
                    copystudent[i].setrollnumber(student[i].getrollnumber());
@@ -156,21 +213,96 @@ class Validator:public Student,public Filehandler
                 delete[] student;
                 student = new Student[ssize];
                 student = copystudent;
+                for (int l = 0; l < ssize; l++)
+                {
+                  student[l].setname(copystudent[l].getname());
+                  student[l].setrollnumber(copystudent[l].getrollnumber());
+                  student[l].setage(copystudent[l].getage());
+                  student[l].setcontactno(copystudent[l].getcontactno());
+                }
               }
               Filehandler::enroll(name, rollno,contactno,age);
-              char a;
-              cout << "PRESS SPACE TO CONTINUE." << endl;
-              a = _getch();
-              while (a != ' ')
-              {
-                a = _getch();
-              }
-              cout<<name<<endl;
-              cout<<age<<endl;
-              cout<<rollno<<endl;
-              cout<<contactno<<endl;
-              //Student::
-
+              moveon();
+        }
+        void display()
+        {
+          Filehandler::display();
+        }
+        void remove()
+        {
+          string name = "0";
+          string contactno;
+          int age;
+          string rollno;
+          int marks;
+          string sname;
+          ssize = Filehandler::sizeset();
+          student = new Student[ssize];
+          ifstream infile("students.txt");
+          int i = 0;
+          while (infile >> name >> sname >> rollno >> age >> contactno)
+          {
+            student[i].setage(age);
+            student[i].setcontactno(contactno);
+            student[i].setrollnumber(rollno);
+            string space = " ";
+            name.append(space);
+            name.append(sname);
+            student[i].setname(name);
+            i++;
+         }
+        infile.close();
+        string ret = "N0";
+        cout << "ENTER THE ROLL NUMBER OF STUDENT YOU WANT TO REMOVE:";
+        getline(cin >> ws, rollno);
+        bool flag = false;
+        for (i = 0; i < ssize; i++)
+         {
+            if (student[i].getrollnumber() == rollno)
+            {
+                name=student[i].getname();
+                Student* copystudent = new Student[(ssize-1)];
+                for (int k = 0; k < i; k++)
+                {
+                    copystudent[k].setname(student[k].getname());
+                    copystudent[k].setrollnumber(student[k].getrollnumber());
+                    copystudent[k].setage(student[k].getage());
+                    copystudent[k].setcontactno(student[k].getcontactno());
+                }
+                for (int j = i; j < (ssize - 1); j++)
+                {
+                    copystudent[j].setname(student[j+1].getname());
+                    copystudent[j].setrollnumber(student[j+1].getrollnumber());
+                    copystudent[j].setage(student[j+1].getage());
+                    copystudent[j].setcontactno(student[j+1].getcontactno());
+                }
+                ssizedec();
+                delete[] student;
+                student = new Student[ssize];
+                for (int l = 0; l < ssize; l++)
+                {
+                    student[l].setname(copystudent[l].getname());
+                    student[l].setrollnumber(copystudent[l].getrollnumber());
+                    student[l].setage(copystudent[l].getage());
+                    student[l].setcontactno(copystudent[l].getcontactno());
+                }
+                Filehandler::clear();
+                for (int p = 0; p < ssize; p++)
+                {
+                    Filehandler::remove(student[p].getname(), student[p].getrollnumber(), student[p].getcontactno(), student[p].getage());
+                }
+                flag = true;
+            }
+            if (flag == true)
+            {
+                cout << name << " REMOVED SUCCESSFULLY\n";
+                break;
+            }
+            else
+            {
+              cout<<"NO SUCH STUDENT EXISTS\n";
+            }
+         }
         }
 
 };
@@ -232,10 +364,7 @@ class System:public Validator
     system("cls");
     if(choice ==1)
      {
-
-
-
-
+      Validator::display();
       system("cls");
       System::enroll();
      }
@@ -247,9 +376,10 @@ class System:public Validator
      }
     if(choice==3)
      {
-
-      system("cls");
-      System::enroll();
+       Validator::remove();
+       moveon();
+       system("cls");
+       System::enroll();
      }
     if(choice ==4)
      {
@@ -377,14 +507,18 @@ class System:public Validator
     }  
    system("cls");  
   }
-
-
-
-
-
    ~System(){ }
 };
-
+void moveon()
+{
+  char a;
+  cout << "PRESS SPACE TO CONTINUE." << endl;
+  a = _getch();
+  while (a != ' ')
+  {
+    a = _getch();
+  }
+}
 
 int main()
 {
