@@ -226,6 +226,79 @@ public:
             cout << "NO SUCH STUDENT EXISTS\n";
         }
     }
+    void edit(string croll,string name,string nrollno,string conatctno,int age, int op)
+    {
+        string name1 = "0";
+        string contactno1;
+        int age1;
+        string rollno1;
+        string sname1;
+        ssize = Filehandler::sizeset();
+        students = new Student[ssize];
+        ifstream infile("students.txt");
+        int i = 0;
+        while (infile >> name1 >> sname1 >> rollno1 >> age1 >> contactno1)
+        {
+            students[i].setage(age1);
+            students[i].setcontactno(contactno1);
+            students[i].setrollnumber(rollno1);
+            string space = " ";
+            name1.append(space);
+            name1.append(sname1);
+            students[i].setname(name1);
+            i++;
+        }
+        infile.close();
+        if (op == 1)
+        {
+            for (int i = 0; i < ssize; i++)
+            {
+                if (students[i].getrollnumber() == croll)
+                {
+                    students[i].setname(name);
+                    break;
+                }
+            }
+        }
+        if (op == 2)
+        {
+            for (int i = 0; i < ssize; i++)
+            {
+                if (students[i].getrollnumber() == croll)
+                {
+                    students[i].setrollnumber(nrollno);
+                    break;
+                }
+            }
+        }
+        if (op == 3)
+        {
+            for (int i = 0; i < ssize; i++)
+            {
+                if (students[i].getrollnumber() == croll)
+                {
+                    students[i].setage(age);
+                    break;
+                }
+            }
+        }
+        if (op == 4)
+        {
+            for (int i = 0; i < ssize; i++)
+            {
+                if (students[i].getrollnumber() == croll)
+                {
+                    students[i].setcontactno(conatctno);
+                    break;
+                }
+            }
+        }
+        Filehandler::clear();
+        for (int i = 0; i < ssize; i++)
+        {
+            Filehandler::remove(students[i].getname(), students[i].getrollnumber(), students[i].getcontactno(), students[i].getage());
+        }
+    }
     void setname(string name)
     {
         this->name = name;
@@ -257,6 +330,45 @@ public:
     int getage()
     {
         return age;
+    }
+    int check(string rollnumber)
+    {
+        string name = "0";
+        string contactno;
+        int age;
+        string rollno;
+        string sname;
+        ssize = Filehandler::sizeset();
+        students = new Student[ssize];
+        ifstream infile("students.txt");
+        int i = 0;
+        while (infile >> name >> sname >> rollno >> age >> contactno)
+        {
+            students[i].setage(age);
+            students[i].setcontactno(contactno);
+            students[i].setrollnumber(rollno);
+            string space = " ";
+            name.append(space);
+            name.append(sname);
+            students[i].setname(name);
+            i++;
+        }
+        infile.close();
+        for (int i = 0; i < ssize; i++)
+        {
+            if (students[i].getrollnumber() == rollnumber)
+            {
+                cout << "NAME"<<"\t\t\t" << "Roll Number"<<"\t" << "AGE\t" << "Contact Number\n";
+                cout << students[i].getname() << "\t\t" << students[i].getrollnumber() << "\t" << students[i].getage() << "\t" << students[i].getcontactno() << endl;
+                cout << endl;
+                return 1;
+            }
+            else
+            {
+                continue;
+            }
+        }
+        return 0;
     }
 };
 int Student::ssize = 0;
@@ -378,7 +490,54 @@ public:
         }
         if (choice == 4)
         {
-
+            string name="0";
+            string rollno= "0";
+            string newroll="0";
+            string contactno="0";
+            int age=0;
+            cout << "ENTER THE ROLL NUMBER OF STUDENT WHOSE DETAIL YOU WANT TO EDIT:";
+            getline(cin >> ws, rollno);
+            int check = Student::check(rollno);
+            if (check == 1)
+            {
+                cout << "WHICH STUDENT DETAIL YOU WANT TO EDIT\n";
+                cout << "1- Name of Student.\n";
+                cout << "2- Roll Number of Student.\n";
+                cout << "3- Age of Student.\n";
+                cout << "4- Contact Number of Student.\n";
+                cout << "ENTER YOUR CHOICE:";
+                int choice;
+                Validator::input(choice, 1, 4);
+                if (choice == 1)
+                {
+                    cout << "ENTER NEW NAME:";
+                    getline(cin >> ws, name);
+                    Student::edit(rollno, name, newroll, contactno, age, choice);
+                }
+                if (choice == 2)
+                {
+                    cout << "ENTER NEW ROLL NUMBER:";
+                    getline(cin >> ws, newroll);
+                    Student::edit(rollno, name, newroll, contactno, age, choice);
+                }
+                if (choice == 3)
+                {
+                    cout << "ENTER NEW AGE:";
+                    cin >> age;
+                    Student::edit(rollno, name, newroll, contactno, age, choice);
+                }
+                if (choice == 4)
+                {
+                    cout << "ENTER NEW CONTACT NUMBER:";
+                    getline(cin >> ws, contactno);
+                    Student::edit(rollno, name, newroll, contactno, age, choice);
+                }
+            }
+            else 
+            {
+                cout << "NO SUCH STUDENT EXISTS\n";
+                moveon();
+            }
             system("cls");
             System::enroll();
         }
