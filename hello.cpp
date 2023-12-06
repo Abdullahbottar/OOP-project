@@ -11,6 +11,34 @@ class Course;
 class Filehandler
 {
 public:
+ void courseadd(string code, string cname, string Instructor, int credits,int cap)
+    {
+        fstream outfile("Courses.txt", ios::app);
+        outfile << code << "\t" << cname << "\t" << Instructor << "\t" << credits <<"\t" << cap << endl;
+        outfile.close();
+    }
+    void coursedisplay()
+    {
+        ifstream infile("Courses.txt");
+        cout << "CODE" << "\t" << "NAME" << "\t\t\t" << "INSTRUCTOR" << "\t\t" << "CREDITS"<<"\t" <<"CAPACITY\n";
+        string name, code, instructor, nname, instructors;
+        int credits;
+        int cap;
+        while (infile >> code >> name >> nname >> instructor >> instructors >> credits>>cap)
+        {
+            int len = name.size();
+            len += nname.size();
+            if (len > 15)
+            {
+                cout << code << "\t" << name << " " << nname << setw(10) << instructor << " " << instructors << "\t\t" << credits <<"\t" <<cap<< endl;
+            }
+            else
+            {
+                cout << code << "\t" << name << " " << nname << "\t       " << instructor << " " << instructors << "\t\t" << credits << "\t" << cap << endl;
+            }
+        }
+        infile.close();
+    }
     void enroll(string name, string rollno, string contactno, int age)
     {
         fstream outfile("students.txt", ios::app);
@@ -43,6 +71,17 @@ public:
     static int sizeset()
     {
         fstream infile("students.txt", ios::in);
+        int linecount = 0;
+        string line;
+        while (getline(infile, line))
+        {
+            linecount++;
+        }
+        return linecount;
+    }
+     static int coursesizeset()
+    {
+        fstream infile("Courses.txt", ios::in);
         int linecount = 0;
         string line;
         while (getline(infile, line))
@@ -373,22 +412,160 @@ public:
 };
 int Student::ssize = 0;
 int Student::csize = 0;
-class Course
+class Course:public Filehandler
 {
     string code;
     string Instructor;
-    string name;
+    string cname;
     int credits;
     int capacity;         //to be determined
     Student* students;
+    Course* courses;
+    static int csize;
+    static int ssize;
 public:
-
+ Course()
+    {
+        code = "0";
+        cname = "0";
+        Instructor = "0";
+        credits = 0;
+        capacity = 0;
+        students = nullptr;
+        courses = nullptr;
+    }
+    static void ssizeinc() //student size increment
+    {
+        ssize++;
+    }
+    static void ssizedec() //student size increment
+    {
+        ssize--;
+    }
+    static void csizeinc()  //course size increment
+    {
+        csize++;
+    }
+    void cadd(string code, string cname, string Instructor, int credits)
+    {
+        string c;
+        string n;
+        string nn;
+        string insf;
+        string insl;
+        int cred;
+        int limit;
+        csize = Filehandler::coursesizeset();
+        courses = new Course[csize];
+        ifstream infile("Courses.txt");
+        int i = 0;
+        while (infile >> c >> n >> nn >> insf >> insl >> cred>>limit)
+        {
+            courses[i].setcode(c);
+            courses[i].setcredits(cred);
+            string space = " ";
+            n.append(space);
+            n.append(nn);
+            courses[i].setcname(n);
+            insf.append(space);
+            insf.append(insl);
+            courses[i].setinstructor(insf);
+            courses[i].setcapacity(limit);
+            i++;
+        }
+        infile.close();
+        if (courses == nullptr)
+        {
+            courses = new Course[csize + 1];
+            courses[csize].setcode(code);
+            courses[csize].setcname(cname);
+            courses[csize].setinstructor(Instructor);
+            courses[csize].setcredits(credits);
+            courses[csize].setcapacity(0);
+            csizeinc();
+        }
+        else
+        {
+            Course* copycourse = new Course[csize + 1];
+            for (int i = 0; i < csize; i++)
+            {
+                copycourse[i].setcname(courses[i].getcname());
+                copycourse[i].setcode(courses[i].getcode());
+                copycourse[i].setinstructor(courses[i].getinstructor());
+                copycourse[i].setcredits(courses[i].getcredits());
+                copycourse[i].setcapacity(courses[i].getcapcity());
+            }
+            copycourse[csize].setcname(cname);
+            copycourse[csize].setcode(code);
+            copycourse[csize].setinstructor(Instructor);
+            copycourse[csize].setcredits(credits);
+            copycourse[csize].setcapacity(0);
+            csizeinc();
+            delete[] courses;
+            courses = new Course[csize];
+            for (int i = 0; i < csize; i++)
+            {
+                courses[i].setcname(copycourse[i].getcname());
+                courses[i].setcode(copycourse[i].getcode());
+                courses[i].setinstructor(copycourse[i].getinstructor());
+                courses[i].setcredits(copycourse[i].getcredits());
+                courses[i].setcapacity(copycourse[i].getcapcity());
+            }
+        }           //enrolling a student;
+        Filehandler::courseadd(code, cname, Instructor, credits,0);
+    }
+    void display()
+    {
+        Filehandler::coursedisplay();
+    }
+    string getcode()
+    {
+        return code;
+    }
+    string getinstructor()
+    {
+        return Instructor;
+    }
+    string getcname()
+    {
+        return cname;
+    }
+    int getcredits()
+    {
+        return credits;
+    }
+    void setcode(string code)
+    {
+        this->code = code;
+    }
+    void setinstructor(string instructor)
+    {
+        this->Instructor = instructor;
+    }
+    void setcname(string cname)
+    {
+        this->cname = cname;
+    }
+    void setcredits(int credits)
+    {
+        this->credits = credits;
+    }
+    int getcapcity()
+    {
+        return capacity;
+    }
+    void setcapacity(int capacity)
+    {
+        this->capacity = capacity;
+    }
 };
+int Course::csize = 0;
+int Course::ssize = 0;
 class Validator :public Filehandler
 {
 public:
     Validator() {}
-    int input(int& choice, int ll, int ul)
+    void input(int& choice, int ll, int ul)
     {
         cin >> choice;
         while (choice<ll || choice >ul)
@@ -396,7 +573,6 @@ public:
             cout << "ENTER CORRECT CHOICE:";
             cin >> choice;
         }
-        return choice;
     }
 };
 class System :public Validator,public Student
@@ -550,7 +726,7 @@ public:
     }
     void coursereg()
     {
-        cout << "1- Available Courses.\n";
+      cout << "1- Available Courses.\n";
         cout << "2- Registered Courses.\n";
         cout << "3- Back\n";
         cout << "\n\n";
@@ -560,7 +736,36 @@ public:
         system("cls");
         if (choice == 1)
         {
-
+            cout << "1- ADD A COURSE.\n";
+            cout << "2- DISPLAY COURSES.\n";
+            cout << "3- BACK\n";
+            cout << "ENTER YOUR CHOICE:";
+            Validator::input(choice, 1, 3);
+            if (choice == 1)
+            {
+                system("cls");
+                string cname;
+                string code;
+                string instructor;
+                int credits;
+                cout << "Enter Course Code:";
+                getline(cin >> ws, code);
+                cout << "Enter Course Name:";
+                getline(cin >> ws, cname);
+                cout << "Enter Instructors Name:";
+                getline(cin >> ws, instructor);
+                cout << "Enter Course Credit Hours:";
+                cin >> credits;
+                Course obj;
+                obj.cadd(code, cname, instructor, credits);
+            }
+            if (choice == 2)
+            {
+                system("cls");
+                Course obj;
+                obj.display();
+            }
+            moveon();
             system("cls");
             System::coursereg();
         }
@@ -661,11 +866,6 @@ public:
         }
         system("cls");
     }
-
-
-
-
-
     ~System() { }
 };
 void moveon()
