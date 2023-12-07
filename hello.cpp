@@ -17,7 +17,7 @@ public:
     void clear();
     void courseadd(string code, string cname, string Instructor, int credits, int cap);
     void coursedisplay();
-    void studentcourse(string textfile, string name, string code, float attendence, float marks);
+    void studentcourse(string textfile, string name, string code, string instructor, int credits, int capacity);
     void studentcoursedisplay(string textfile);
     static int sizeset()
     {
@@ -109,6 +109,7 @@ public:
     void Register(string rollnumber, Course& obj);
     int check(string rollnumber);
     void coursesdisplay(string rollnumber);
+    void setstudentscourses(string rollnumber);
     static void ssizeinc() //student size increment
     {
         ssize++;
@@ -553,30 +554,33 @@ void Filehandler::coursedisplay()
     }
     infile.close();
 }
-void Filehandler::studentcourse(string textfile, string name, string code, float attendence, float marks)
+void Filehandler::studentcourse(string textfile, string name, string code, string instructor,int credits,int capacity)
 {
     fstream outfile(textfile, ios::app);
-    outfile << code << "\t" << name << "\t\t" << attendence << "\t" << marks << endl;
+    outfile << code << "\t" << name << "\t\t" <<instructor<<"\t\t"<<credits<<"\t\t"<< capacity << endl;
     outfile.close();
 }
 void Filehandler::studentcoursedisplay(string textfile)
 {
     ifstream infile(textfile);
-    cout << "CODE" << "\t\t" << "NAME" << "\n";
-    string name, code, instructor, nname, instructors;
+    cout << "CODE" << "\t" << "NAME" << "\t\t\t" << "INSTRUCTOR" << "\t\t" << "CREDITS" << "\t" << "CAPACITY\n";
+    string name, code, instructor, nname;
     int credits;
     int cap;
-    while (infile >> code >> name >> nname)
+    string insf;
+    string insl;
+    while (infile >> code >> name >> nname>>insf>>insl>>credits>>cap)
     {
         int len = name.size();
         len += nname.size();
+
         if (len > 15)
         {
-            cout << code << "\t" << name << " " << nname <<  endl;
+            cout << code << "\t" << name << " " << nname << "\t\t" <<insf <<" "<<insl<<"\t   " << credits << "\t" << cap << endl;
         }
         else
         {
-            cout << code << "\t" << name << " " << nname << endl;
+            cout << code << "\t" << name << " " << nname << "\t\t" << insf << " " << insl << "\t   " << credits << "\t" << cap <<endl;
         }
     }
     infile.close();
@@ -597,9 +601,10 @@ void Student::Register(string rollnumber, Course& obj)
             string txt = ".txt";
             textfile.append(txt);
             cout << "COURSE REGISTERED.\n";
-            if (courses1 == nullptr)
+            csize = Filehandler::studentcoursesize(textfile);
+            if (csize== 0)
             {
-                csize = 0;
+                csize = 1;
                 courses1 = new Course[csize];
                 courses1->setcoursename(obj.getcoursename());
                 courses1->setcode(obj.getcode());
@@ -609,6 +614,7 @@ void Student::Register(string rollnumber, Course& obj)
             }
             else
             {
+                setstudentscourses(textfile);
                 csize = Filehandler::studentcoursesize(textfile);
                 Course* copycourse = new Course[csize + 1];
                 for (int l = 0; l < csize; l++)
@@ -636,7 +642,7 @@ void Student::Register(string rollnumber, Course& obj)
                     courses1[l].setcapacity(copycourse[l].getcapcity());
                 }
             }
-            Filehandler::studentcourse(textfile, obj.getcoursename(), obj.getcode(), students[i].attendence, students[i].marks);
+            Filehandler::studentcourse(textfile, obj.getcoursename(), obj.getcode(), obj.getinstructor(),obj.getcredits(),obj.getcapcity());
             moveon();
             break;
         }
@@ -645,6 +651,35 @@ void Student::Register(string rollnumber, Course& obj)
             continue;
         }
     }
+}
+void Student::setstudentscourses(string rollnumber)
+{
+    string c;
+    string n;
+    string nn;
+    string insf;
+    string insl;
+    int cred;
+    int limit;
+    csize = Filehandler::coursesizeset();
+    courses1 = new Course[csize];
+    ifstream infile(rollnumber);
+    int i = 0;
+    while (infile >> c >> n >> nn >> insf >> insl >> cred >> limit)
+    {
+        courses1[i].setcode(c);
+        courses1[i].setcredits(cred);
+        string space = " ";
+        n.append(space);
+        n.append(nn);
+        courses1[i].setcoursename(n);
+        insf.append(space);
+        insf.append(insl);
+        courses1[i].setinstructor(insf);
+        courses1[i].setcapacity(limit);
+        i++;
+    }
+    infile.close();
 }
 void Student::set(string name, string rollno, string contactno, int age)
 {
@@ -855,7 +890,6 @@ void Student::coursesdisplay(string rollnumber)
         }
     }
 }
-
                                      //COURSES FUNCTIONS
 void Course::setcourses()
 {
