@@ -11,66 +11,28 @@ class Course;
 class Filehandler
 {
 public:
-    void courseadd(string code, string cname, string Instructor, int credits, int cap)
-    {
-        fstream outfile("Courses.txt", ios::app);
-        outfile << code << "\t" << cname << "\t" << Instructor << "\t" << credits << "\t" << cap << endl;
-        outfile.close();
-    }
-    void coursedisplay()
-    {
-        ifstream infile("Courses.txt");
-        cout << "CODE" << "\t" << "NAME" << "\t\t\t" << "INSTRUCTOR" << "\t\t" << "CREDITS" << "\t" << "CAPACITY\n";
-        string name, code, instructor, nname, instructors;
-        int credits;
-        int cap;
-        while (infile >> code >> name >> nname >> instructor >> instructors >> credits >> cap)
-        {
-            int len = name.size();
-            len += nname.size();
-            if (len > 15)
-            {
-                cout << code << "\t" << name << " " << nname << setw(10) << instructor << " " << instructors << "\t\t" << credits << "\t" << cap << endl;
-            }
-            else
-            {
-                cout << code << "\t" << name << " " << nname << "\t       " << instructor << " " << instructors << "\t\t" << credits << "\t" << cap << endl;
-            }
-        }
-        infile.close();
-    }
-    void enroll(string name, string rollno, string contactno, int age)
-    {
-        fstream outfile("students.txt", ios::app);
-        outfile << name << "\t" << rollno << "   " << age << "\t" << contactno << endl;
-        outfile.close();
-    }
-    void display()
-    {
-        ifstream infile("students.txt");
-        cout << "NAME" << "\t\t\t" << "ROLL NUMBER" << "\t\t" << "AGE" << "\t\t" << "CONTACT INFORMATION\n";
-        string name, rollno, contactinfo, sname;
-        int age;
-        while (infile >> name >> sname >> rollno >> age >> contactinfo)
-        {
-            cout << name << " " << sname << "\t\t" << rollno << "\t\t" << age << "\t\t" << contactinfo << endl;
-        }
-        moveon();
-        infile.close();
-    }
-    void remove(string name, string rollno, string contactno, int age)
-    {
-        ofstream outfile("students.txt", ios::app);
-        outfile << name << "\t" << rollno << "   " << age << "\t" << contactno << endl;
-    }
-    void clear()
-    {
-        ofstream outfile("students.txt", ios::trunc);
-        outfile.close();
-    }
+    void enroll(string name, string rollno, string contactno, int age);
+    void display();
+    void remove(string name, string rollno, string contactno, int age);
+    void clear();
+    void courseadd(string code, string cname, string Instructor, int credits, int cap);
+    void coursedisplay();
+    void studentcourse(string textfile, string name, string code, float attendence, float marks);
+    void studentcoursedisplay(string textfile);
     static int sizeset()
     {
-        fstream infile("students.txt", ios::in);
+        fstream infile("nstudents.txt", ios::in);
+        int linecount = 0;
+        string line;
+        while (getline(infile, line))
+        {
+            linecount++;
+        }
+        return linecount;
+    }
+    int studentcoursesize(string textfile)
+    {
+        fstream infile(textfile, ios::in);
         int linecount = 0;
         string line;
         while (getline(infile, line))
@@ -81,7 +43,7 @@ public:
     }
     static int coursesizeset()
     {
-        fstream infile("Courses.txt", ios::in);
+        fstream infile("nCourses.txt", ios::in);
         int linecount = 0;
         string line;
         while (getline(infile, line))
@@ -97,24 +59,56 @@ class Student :public Filehandler
     string rollnumber;
     int age;
     string contactno;
-    Course* courses;
+    Course* courses1;
     float marks;    //to be determined
     float attendence;
     static int ssize;
-    static int csize;
+    int csize;
     Student* students;
 public:
     Student()
     {
+        age = 0;
         name = "0";
         rollnumber = "0";
-        age = 0;
         contactno = "0";
         marks = 0;
         attendence = 0;
-        courses = nullptr;
+        courses1 = nullptr;
         students = nullptr;
     }
+    //Student(string rollnumber)
+    //{
+    //    setstudents();
+    //    for (int i = 0; i < ssize; i++)
+    //    {
+    //        if (students[i].getrollnumber() == rollnumber)
+    //        {
+    //            students[i].marks = 0;
+    //            students[i].attendence = 0;
+    //            string textfile = students[i].getrollnumber();
+    //            string txt = ".txt";
+    //            textfile.append(txt);
+    //            Filehandler::studentcourse(textfile, obj.getcoursename(), obj.getcode(), students[i].attendence, students[i].marks);
+    //            cout << "COURSE REGISTERED.\n";
+    //            moveon();
+    //            break;
+    //        }
+    //        else
+    //        {
+    //            continue;
+    //        }
+    //    }
+    //}
+    void set(string name, string rollno, string contactno, int age);
+    void display();
+    void setstudents();
+    void enroll(Student& obj);
+    void remove(string rollnumber);
+    void edit(string croll, string name, string conatctno, int age, int op);
+    void Register(string rollnumber, Course& obj);
+    int check(string rollnumber);
+    void coursesdisplay(string rollnumber);
     static void ssizeinc() //student size increment
     {
         ssize++;
@@ -122,185 +116,6 @@ public:
     static void ssizedec() //student size increment
     {
         ssize--;
-    }
-    static void csizeinc()  //course size increment
-    {
-        csize++;
-    }
-    void setstudents()
-    {
-        string name1 = "0";
-        string contactno1;
-        int age1;
-        string rollno1;
-        string sname1;
-        ssize = Filehandler::sizeset();
-        students = new Student[ssize];
-        ifstream infile("students.txt");
-        int i = 0;
-        while (infile >> name1 >> sname1 >> rollno1 >> age1 >> contactno1)
-        {
-            students[i].setage(age1);
-            students[i].setcontactno(contactno1);
-            students[i].setrollnumber(rollno1);
-            string space = " ";
-            name1.append(space);
-            name1.append(sname1);
-            students[i].setname(name1);
-            i++;
-        }
-        infile.close();
-    }
-    void enroll(string namee, string rollnumbere, int agee, string contactnoe)
-    {
-        this->name = namee;
-        this->age = agee;
-        this->rollnumber = rollnumbere;
-        this->contactno = contactnoe;
-        setstudents();
-        if (students == nullptr)
-        {
-            students = new Student[ssize + 1];
-            students[ssize].setname(namee);
-            students[ssize].setcontactno(contactnoe);
-            students[ssize].setage(agee);
-            students[ssize].setrollnumber(rollnumbere);
-            ssizeinc();
-        }          //enrolling a student;
-        else
-        {
-            Student* copystudent = new Student[ssize + 1];
-            for (int i = 0; i < ssize; i++)
-            {
-                copystudent[i].setname(students[i].getname());
-                copystudent[i].setrollnumber(students[i].getrollnumber());
-                copystudent[i].setage(students[i].getage());
-                copystudent[i].setcontactno(students[i].getcontactno());
-            }
-            copystudent[ssize].setname(namee);
-            copystudent[ssize].setage(agee);
-            copystudent[ssize].setcontactno(contactnoe);
-            copystudent[ssize].setrollnumber(rollnumbere);
-            ssizeinc();
-            delete[] students;
-            students = new Student[ssize];
-            for (int l = 0; l < ssize; l++)
-            {
-                students[l].setname(copystudent[l].getname());
-                students[l].setrollnumber(copystudent[l].getrollnumber());
-                students[l].setage(copystudent[l].getage());
-                students[l].setcontactno(copystudent[l].getcontactno());
-            }
-        }           //enrolling a student;
-        Filehandler::enroll(namee, rollnumbere, contactnoe, agee);
-    }
-    void display()
-    {
-        Filehandler::display();
-    }
-    void remove(string rollnumber)
-    {
-        setstudents();
-        bool flag = false;
-        for (int i = 0; i < ssize; i++)
-        {
-            if (students[i].getrollnumber() == rollnumber)
-            {
-                name = students[i].getname();
-                Student* copystudent = new Student[(ssize - 1)];
-                for (int k = 0; k < i; k++)
-                {
-                    copystudent[k].setname(students[k].getname());
-                    copystudent[k].setrollnumber(students[k].getrollnumber());
-                    copystudent[k].setage(students[k].getage());
-                    copystudent[k].setcontactno(students[k].getcontactno());
-                }
-                for (int j = i; j < (ssize - 1); j++)
-                {
-                    copystudent[j].setname(students[j + 1].getname());
-                    copystudent[j].setrollnumber(students[j + 1].getrollnumber());
-                    copystudent[j].setage(students[j + 1].getage());
-                    copystudent[j].setcontactno(students[j + 1].getcontactno());
-                }
-                ssizedec();
-                delete[] students;
-                students = new Student[ssize];
-                for (int l = 0; l < ssize; l++)
-                {
-                    students[l].setname(copystudent[l].getname());
-                    students[l].setrollnumber(copystudent[l].getrollnumber());
-                    students[l].setage(copystudent[l].getage());
-                    students[l].setcontactno(copystudent[l].getcontactno());
-                }
-                Filehandler::clear();
-                for (int p = 0; p < ssize; p++)
-                {
-                    Filehandler::remove(students[p].getname(), students[p].getrollnumber(), students[p].getcontactno(), students[p].getage());
-                }
-                flag = true;
-            }
-        }
-        if (flag == true)
-        {
-            cout << name << " REMOVED SUCCESSFULLY\n";
-        }
-        else
-        {
-            cout << "NO SUCH STUDENT EXISTS\n";
-        }
-    }
-    void edit(string croll, string name, string nrollno, string conatctno, int age, int op)
-    {
-        setstudents();
-        if (op == 1)
-        {
-            for (int i = 0; i < ssize; i++)
-            {
-                if (students[i].getrollnumber() == croll)
-                {
-                    students[i].setname(name);
-                    break;
-                }
-            }
-        }
-        if (op == 2)
-        {
-            for (int i = 0; i < ssize; i++)
-            {
-                if (students[i].getrollnumber() == croll)
-                {
-                    students[i].setrollnumber(nrollno);
-                    break;
-                }
-            }
-        }
-        if (op == 3)
-        {
-            for (int i = 0; i < ssize; i++)
-            {
-                if (students[i].getrollnumber() == croll)
-                {
-                    students[i].setage(age);
-                    break;
-                }
-            }
-        }
-        if (op == 4)
-        {
-            for (int i = 0; i < ssize; i++)
-            {
-                if (students[i].getrollnumber() == croll)
-                {
-                    students[i].setcontactno(conatctno);
-                    break;
-                }
-            }
-        }
-        Filehandler::clear();
-        for (int i = 0; i < ssize; i++)
-        {
-            Filehandler::remove(students[i].getname(), students[i].getrollnumber(), students[i].getcontactno(), students[i].getage());
-        }
     }
     void setname(string name)
     {
@@ -334,147 +149,70 @@ public:
     {
         return age;
     }
-    int check(string rollnumber)
-    {
-        setstudents();
-        for (int i = 0; i < ssize; i++)
-        {
-            if (students[i].getrollnumber() == rollnumber)
-            {
-                cout << "NAME" << "\t\t\t" << "Roll Number" << "\t" << "AGE\t" << "Contact Number\n";
-                cout << students[i].getname() << "\t\t" << students[i].getrollnumber() << "\t" << students[i].getage() << "\t" << students[i].getcontactno() << endl;
-                cout << endl;
-                return 1;
-            }
-            else
-            {
-                continue;
-            }
-        }
-        return 0;
-    }
-    void Register(string rollnumber,string cname,string code)
-    {
-        setstudents();
-        for (int i = 0; i < ssize; i++)
-        {
-            if (students[i].getrollnumber() == rollnumber)
-            {
-
-                string textfile = students[i].getrollnumber();
-                string txt = ".txt";
-                textfile.append(txt);
-
-            }
-            else
-            {
-                continue;
-            }
-        }
-    }
-    string getname1(string rollno)
-    {
-        setstudents();
-        for (int i = 0; i < ssize; i++)
-        {
-            if (students[i].getrollnumber() == rollnumber)
-            {
-                return students[i].getname();
-
-            }
-            else
-            {
-                continue;
-            }
-        }
-    }
 };
 int Student::ssize = 0;
-int Student::csize = 0;
 class Course :public Filehandler
 {
     string code;
     string Instructor;
-    string cname;
+    string coursename;
     int credits;
     int capacity;         //to be determined
     Student* students;
     Course* courses;
-    static int csize;
-    static int ssize;
+    static int clen;
+    static int slen;
 public:
     Course()
     {
         code = "0";
-        cname = "0";
+        coursename = "0";
         Instructor = "0";
         credits = 0;
         capacity = 0;
         students = nullptr;
         courses = nullptr;
     }
-    static void ssizeinc() //student size increment
+    Course(string code, string coursename, string instructor, int capacity, int credits)
     {
-        ssize++;
+        this->code = code;
+        this->coursename = coursename;
+        this->Instructor = instructor;
+        this->credits = credits;
+        this->capacity = capacity;
     }
-    static void ssizedec() //student size increment
-    {
-        ssize--;
-    }
-    static void csizeinc()  //course size increment
-    {
-        csize++;
-    }
-    void cadd(string code, string cname, string Instructor, int credits)
+    Course(string code)
     {
         setcourses();
-        if (courses == nullptr)
+        for (int i = 0; i < clen; i++)
         {
-            courses = new Course[csize + 1];
-            courses[csize].setcode(code);
-            courses[csize].setcname(cname);
-            courses[csize].setinstructor(Instructor);
-            courses[csize].setcredits(credits);
-            courses[csize].setcapacity(0);
-            csizeinc();
+            if (courses[i].getcode() == code)
+            {
+                this->code = courses[i].getcode();
+                this->coursename = courses[i].getcoursename();
+                this->Instructor = courses[i].getinstructor();
+                this->credits = courses[i].getcredits();
+                this->capacity = courses[i].getcapcity();
+                break;
+            }
+            else
+            {
+                continue;
+            }
         }
-        else
-        {
-            Course* copycourse = new Course[csize + 1];
-            for (int i = 0; i < csize; i++)
-            {
-                copycourse[i].setcname(courses[i].getcname());
-                copycourse[i].setcode(courses[i].getcode());
-                copycourse[i].setinstructor(courses[i].getinstructor());
-                copycourse[i].setcredits(courses[i].getcredits());
-                copycourse[i].setcapacity(courses[i].getcapcity());
-            }
-            copycourse[csize].setcname(cname);
-            copycourse[csize].setcode(code);
-            copycourse[csize].setinstructor(Instructor);
-            copycourse[csize].setcredits(credits);
-            copycourse[csize].setcapacity(0);
-            csizeinc();
-            delete[] courses;
-            courses = new Course[csize];
-            for (int i = 0; i < csize; i++)
-            {
-                courses[i].setcname(copycourse[i].getcname());
-                courses[i].setcode(copycourse[i].getcode());
-                courses[i].setinstructor(copycourse[i].getinstructor());
-                courses[i].setcredits(copycourse[i].getcredits());
-                courses[i].setcapacity(copycourse[i].getcapcity());
-            }
-        }           //enrolling a student;
-        Filehandler::courseadd(code, cname, Instructor, credits, 0);
-    }
-    void display()
-    {
-        Filehandler::coursedisplay();
-    }
-    void add()
-    {
 
+    }
+    static void sleninc() //student size increment
+    {
+        slen++;
+    }
+    static void slendec() //student size increment
+    {
+        slen--;
+    }
+    static void cleninc()  //course size increment
+    {
+        clen++;
     }
     string getcode()
     {
@@ -484,9 +222,9 @@ public:
     {
         return Instructor;
     }
-    string getcname()
+    string getcoursename()
     {
-        return cname;
+        return coursename;
     }
     int getcredits()
     {
@@ -500,9 +238,9 @@ public:
     {
         this->Instructor = instructor;
     }
-    void setcname(string cname)
+    void setcoursename(string cname)
     {
-        this->cname = cname;
+        this->coursename = cname;
     }
     void setcredits(int credits)
     {
@@ -516,68 +254,13 @@ public:
     {
         this->capacity = capacity;
     }
-    void setcourses()
-    {
-        string c;
-        string n;
-        string nn;
-        string insf;
-        string insl;
-        int cred;
-        int limit;
-        csize = Filehandler::coursesizeset();
-        courses = new Course[csize];
-        ifstream infile("Courses.txt");
-        int i = 0;
-        while (infile >> c >> n >> nn >> insf >> insl >> cred >> limit)
-        {
-            courses[i].setcode(c);
-            courses[i].setcredits(cred);
-            string space = " ";
-            n.append(space);
-            n.append(nn);
-            courses[i].setcname(n);
-            insf.append(space);
-            insf.append(insl);
-            courses[i].setinstructor(insf);
-            courses[i].setcapacity(limit);
-            i++;
-        }
-        infile.close();
-    }
-    int check(string code)
-    {
-        setcourses();
-        for (int i = 0; i < csize; i++)
-        {
-            if (courses[i].getcode() == code)
-            {
-                if (courses[i].getcapcity() == 50)
-                {
-                    return 2;
-                }
-                else
-                {
-                    return 1;
-                }
-            }
-        }
-        return 0;
-    }
-    string getnamewithcode(string code)
-    {
-        setcourses();
-        for (int i = 0; i < csize; i++)
-        {
-            if (courses[i].getcode() == code)
-            {
-                return courses[i].getcname();
-            }
-        }
-    }
+    void setcourses();
+    int check(string code);
+    void cadd(Course& obj);
+    void display();
 };
-int Course::csize = 0;
-int Course::ssize = 0;
+int Course::clen = 0;
+int Course::slen = 0;
 class Validator :public Filehandler
 {
 public:
@@ -592,155 +275,12 @@ public:
         }
     }
 };
-class System :public Validator, public Student
+class System :public Validator, public Student, public Course
 {
 public:
-    System() { }
-    void Menu()
-    {
-        int choice = 0;
-        cout << "1- Enroll a student.\n";
-        cout << "2- Course Registration.\n";
-        cout << "3- Attendence.\n";
-        cout << "4- Marks.\n";
-        cout << "5- Course withdraw.\n";
-        cout << "6- Exit\n";
-        cout << "\n\n";
-        cout << "ENTER YOUR CHOICE:";
-        Validator::input(choice, 1, 6);
-        system("cls");
-        if (choice == 1)
-        {
-            System::enroll();
-        }
-        if (choice == 2)
-        {
-            System::coursereg();
-        }
-        if (choice == 3)
-        {
-            System::checkattend();                                        //attendance
-        }
-        if (choice == 4)
-        {
-            System::marksassign();
-        }
-        if (choice == 5)
-        {
-            System::coursewith();
-        }
-        if (choice == 6)
-        {
-            system("cls");                                          //exiting
-        }
-    }
-    void enroll()
-    {
-        cout << "1- Display Already Enrolled Students.\n";
-        cout << "2- Add a Student.\n";
-        cout << "3- Remove a Student.\n";
-        cout << "4- Edit Student Detail.\n";
-        cout << "5- Back\n";
-        cout << "\n\n";
-        cout << "ENTER YOUR CHOICE:";
-        int choice;
-        Validator::input(choice, 1, 5);
-        system("cls");
-        if (choice == 1)
-        {
-            Student::display();
-            system("cls");
-            System::enroll();
-        }
-        if (choice == 2)
-        {
-            string name;
-            string rollno;
-            string contactno;
-            int age;
-            cout << "Enter Student Name:";
-            getline(cin >> ws, name);
-            cout << "Enter Student Age:";
-            cin >> age;
-            cout << "Enter Student Roll number:";
-            getline(cin >> ws, rollno);
-            cout << "Enter Student Contactno:";
-            getline(cin >> ws, contactno);
-            moveon();
-            system("cls");
-            Student::enroll(name, rollno, age, contactno);
-            System::enroll();
-        }
-        if (choice == 3)
-        {
-            string rollno;
-            cout << "ENTER THE ROLL NUMBER OF STUDENT YOU WANT TO REMOVE:";
-            getline(cin >> ws, rollno);
-            Student::remove(rollno);
-            moveon();
-            system("cls");
-            System::enroll();
-        }
-        if (choice == 4)
-        {
-            string name = "0";
-            string rollno = "0";
-            string newroll = "0";
-            string contactno = "0";
-            int age = 0;
-            cout << "ENTER THE ROLL NUMBER OF STUDENT WHOSE DETAIL YOU WANT TO EDIT:";
-            getline(cin >> ws, rollno);
-            int check = Student::check(rollno);
-            if (check == 1)
-            {
-                cout << "WHICH STUDENT DETAIL YOU WANT TO EDIT\n";
-                cout << "1- Name of Student.\n";
-                cout << "2- Roll Number of Student.\n";
-                cout << "3- Age of Student.\n";
-                cout << "4- Contact Number of Student.\n";
-                cout << "ENTER YOUR CHOICE:";
-                int choice;
-                Validator::input(choice, 1, 4);
-                if (choice == 1)
-                {
-                    cout << "ENTER NEW NAME:";
-                    getline(cin >> ws, name);
-                    Student::edit(rollno, name, newroll, contactno, age, choice);
-                }
-                if (choice == 2)
-                {
-                    cout << "ENTER NEW ROLL NUMBER:";
-                    getline(cin >> ws, newroll);
-                    Student::edit(rollno, name, newroll, contactno, age, choice);
-                }
-                if (choice == 3)
-                {
-                    cout << "ENTER NEW AGE:";
-                    cin >> age;
-                    Student::edit(rollno, name, newroll, contactno, age, choice);
-                }
-                if (choice == 4)
-                {
-                    cout << "ENTER NEW CONTACT NUMBER:";
-                    getline(cin >> ws, contactno);
-                    Student::edit(rollno, name, newroll, contactno, age, choice);
-                }
-            }
-            else
-            {
-                cout << "NO SUCH STUDENT EXISTS\n";
-                moveon();
-            }
-            system("cls");
-            System::enroll();
-        }
-        if (choice == 5)
-        {
-
-            system("cls");
-            System::Menu();
-        }
-    }
+    System() {}
+    void Menu();
+    void enroll();
     void coursereg()
     {
         cout << "1- Available Courses.\n";
@@ -757,15 +297,16 @@ public:
             cout << "2- DISPLAY COURSES.\n";
             cout << "3- BACK\n";
             cout << "ENTER YOUR CHOICE:";
-
-            Validator::input(choice, 1, 3);
-            if (choice == 1)
+            int choice2;
+            Validator::input(choice2, 1, 3);
+            if (choice2 == 1)
             {
                 system("cls");
                 string cname;
                 string code;
                 string instructor;
                 int credits;
+                int capacity = 0;
                 cout << "Enter Course Code:";
                 getline(cin >> ws, code);
                 cout << "Enter Course Name:";
@@ -774,10 +315,10 @@ public:
                 getline(cin >> ws, instructor);
                 cout << "Enter Course Credit Hours:";
                 cin >> credits;
-                Course obj;
-                obj.cadd(code, cname, instructor, credits);
+                Course obj(code, cname, instructor, credits, capacity);
+                Course::cadd(obj);
             }
-            if (choice == 2)
+            if (choice2 == 2)
             {
                 system("cls");
                 Course obj;
@@ -790,7 +331,7 @@ public:
         if (choice == 2)
         {
             string rollno;
-            string cour;
+            string coursecode;
             cout << "ENTER THE STUDENTS ROLL NUMBER WHOSE COURSE YOU WANT TO REGISTER:";
             getline(cin >> ws, rollno);
             int check1 = Student::check(rollno);
@@ -802,24 +343,25 @@ public:
                 cout << "2- REGISTER A COURSE.\n";
                 cout << "3- BACK\n";
                 cout << "ENTER YOUR CHOICE:";
-                Validator::input(choice, 1, 3);
+                int choice2;
+                Validator::input(choice2, 1, 3);
                 system("cls");
-                if (choice == 1)
+                if (choice2 == 1)
                 {
-
+                    Student::coursesdisplay(rollno);
+                    moveon();
                 }
-                if (choice == 2)
+                if (choice2 == 2)
                 {
                     Course obj;
                     cout << "ENTER THE COURSE CODE YOU WANT TO REGISTER:";
-                    getline(cin >> ws, cour);
-                    int check2 = obj.check(cour);
+                    getline(cin >> ws, coursecode);
+                    int check2 = obj.check(coursecode);
                     if (check2 == 1)
                     {
-                        Course obj;
-                        string cname = obj.getnamewithcode(cour);
-                        Student::Register(rollno, cname, cour);
-
+                        Course obj(coursecode);
+                        Student::Register(rollno, obj);
+                        system("cls");
                     }
                     else if (check2 == 2)
                     {
@@ -936,6 +478,11 @@ public:
         }
         system("cls");
     }
+    void exit()
+    {
+        cout << "FLEX EXITED\n";
+        moveon();
+    }
     ~System() { }
 };
 void moveon()
@@ -946,6 +493,614 @@ void moveon()
     while (a != ' ')
     {
         a = _getch();
+    }
+}
+                                                 //FILE HANDLER FUNCTIONS DUE TO FORWARD DECLERATION
+void Filehandler::enroll(string name, string rollno, string contactno, int age)
+{
+    fstream outfile("nstudents.txt", ios::app);
+    outfile << rollno << "\t" << name << "\t" << age << "\t" << contactno << endl;
+    outfile.close();
+}
+void Filehandler::display()
+{
+    ifstream infile("nstudents.txt");
+    cout << "Roll NUMBER" << "\t\t" << "NAME" << "\t\t\t" << "AGE" << "\t\t" << "CONTACT INFORMATION\n";
+    string name, rollno, contactinfo, sname;
+    int age;
+    while (infile >> rollno >> name >> sname >> age >> contactinfo)
+    {
+        cout << rollno << "\t\t" << name << " " << sname << "\t\t" << age << "\t\t" << contactinfo << endl;
+    }
+    moveon();
+    infile.close();
+}
+void Filehandler::remove(string name, string rollno, string contactno, int age)
+{
+    ofstream outfile("nstudents.txt", ios::app);
+    outfile << rollno << "\t" << name << "\t" << age << "\t" << contactno << endl;
+}
+void Filehandler::clear()
+{
+    ofstream outfile("nstudents.txt", ios::trunc);
+    outfile.close();
+}
+void Filehandler::courseadd(string code, string cname, string Instructor, int credits, int cap)
+{
+    fstream outfile("nCourses.txt", ios::app);
+    outfile << code << "\t" << cname << "\t" << Instructor << "\t" << credits << "\t" << cap << endl;
+    outfile.close();
+}
+void Filehandler::coursedisplay()
+{
+    ifstream infile("nCourses.txt");
+    cout << "CODE" << "\t" << "NAME" << "\t\t\t" << "INSTRUCTOR" << "\t\t" << "CREDITS" << "\t" << "CAPACITY\n";
+    string name, code, instructor, nname, instructors;
+    int credits;
+    int cap;
+    while (infile >> code >> name >> nname >> instructor >> instructors >> credits >> cap)
+    {
+        int len = name.size();
+        len += nname.size();
+        if (len > 15)
+        {
+            cout << code << "\t" << name << " " << nname << setw(10) << instructor << " " << instructors << "\t\t" << credits << "\t" << cap << endl;
+        }
+        else
+        {
+            cout << code << "\t" << name << " " << nname << "\t       " << instructor << " " << instructors << "\t\t" << credits << "\t" << cap << endl;
+        }
+    }
+    infile.close();
+}
+void Filehandler::studentcourse(string textfile, string name, string code, float attendence, float marks)
+{
+    fstream outfile(textfile, ios::app);
+    outfile << code << "\t" << name << "\t\t" << attendence << "\t" << marks << endl;
+    outfile.close();
+}
+void Filehandler::studentcoursedisplay(string textfile)
+{
+    ifstream infile(textfile);
+    cout << "CODE" << "\t\t" << "NAME" << "\n";
+    string name, code, instructor, nname, instructors;
+    int credits;
+    int cap;
+    while (infile >> code >> name >> nname)
+    {
+        int len = name.size();
+        len += nname.size();
+        if (len > 15)
+        {
+            cout << code << "\t" << name << " " << nname <<  endl;
+        }
+        else
+        {
+            cout << code << "\t" << name << " " << nname << endl;
+        }
+    }
+    infile.close();
+}
+
+
+                                                      //STUDENT CLASS FUNCTIONS
+void Student::Register(string rollnumber, Course& obj)
+{
+    setstudents();
+    for (int i = 0; i < ssize; i++)
+    {
+        if (students[i].getrollnumber() == rollnumber)
+        {
+            students[i].marks = 0;
+            students[i].attendence = 0;
+            string textfile = students[i].getrollnumber();
+            string txt = ".txt";
+            textfile.append(txt);
+            cout << "COURSE REGISTERED.\n";
+            if (courses1 == nullptr)
+            {
+                csize = 0;
+                courses1 = new Course[csize];
+                courses1->setcoursename(obj.getcoursename());
+                courses1->setcode(obj.getcode());
+                courses1->setcapacity(obj.getcapcity());
+                courses1->setinstructor(obj.getinstructor());
+                courses1->setcredits(obj.getcredits());
+            }
+            else
+            {
+                csize = Filehandler::studentcoursesize(textfile);
+                Course* copycourse = new Course[csize + 1];
+                for (int l = 0; l < csize; l++)
+                {
+                    copycourse[l].setcoursename(courses1[l].getcoursename());
+                    copycourse[l].setcode(courses1[l].getcode());
+                    copycourse[l].setinstructor(courses1[l].getinstructor());
+                    copycourse[l].setcredits(courses1[l].getcredits());
+                    copycourse[l].setcapacity(courses1[l].getcapcity());
+                }
+                copycourse[csize].setcoursename(obj.getcoursename());
+                copycourse[csize].setcode(obj.getcode());
+                copycourse[csize].setinstructor(obj.getinstructor());
+                copycourse[csize].setcredits(obj.getcredits());
+                copycourse[csize].setcapacity(obj.getcapcity());
+                csize++;
+                delete[] courses1;
+                courses1 = new Course[csize];
+                for (int l = 0; l < csize; l++)
+                {
+                    courses1[l].setcoursename(copycourse[l].getcoursename());
+                    courses1[l].setcode(copycourse[l].getcode());
+                    courses1[l].setinstructor(copycourse[l].getinstructor());
+                    courses1[l].setcredits(copycourse[l].getcredits());
+                    courses1[l].setcapacity(copycourse[l].getcapcity());
+                }
+            }
+            Filehandler::studentcourse(textfile, obj.getcoursename(), obj.getcode(), students[i].attendence, students[i].marks);
+            moveon();
+            break;
+        }
+        else
+        {
+            continue;
+        }
+    }
+}
+void Student::set(string name, string rollno, string contactno, int age)
+{
+    this->name = name;
+    this->contactno = contactno;
+    this->age = age;
+    this->rollnumber = rollno;
+}
+void Student::setstudents()
+{
+    string name1 = "0";
+    string contactno1;
+    int age1;
+    string rollno1;
+    string sname1;
+    ssize = Filehandler::sizeset();
+    students = new Student[ssize];
+    ifstream infile("nstudents.txt");
+    int i = 0;
+    while (infile >> rollno1 >> name1 >> sname1 >> age1 >> contactno1)
+    {
+        students[i].setage(age1);
+        students[i].setcontactno(contactno1);
+        students[i].setrollnumber(rollno1);
+        string space = " ";
+        name1.append(space);
+        name1.append(sname1);
+        students[i].setname(name1);
+        i++;
+    }
+    infile.close();
+}
+void Student::enroll(Student& obj)
+{
+    setstudents();
+    this->name = obj.name;
+    this->age = obj.age;
+    this->contactno = obj.contactno;
+    this->rollnumber = obj.rollnumber;
+    if (students == nullptr)
+    {
+        students = new Student[ssize + 1];
+        students[ssize].setname(obj.getname());
+        students[ssize].setcontactno(obj.getcontactno());
+        students[ssize].setage(obj.getage());
+        students[ssize].setrollnumber(obj.getrollnumber());
+        ssizeinc();
+    }          //enrolling a student;
+    else
+    {
+        Student* copystudent = new Student[ssize + 1];
+        for (int i = 0; i < ssize; i++)
+        {
+            copystudent[i].setname(students[i].getname());
+            copystudent[i].setrollnumber(students[i].getrollnumber());
+            copystudent[i].setage(students[i].getage());
+            copystudent[i].setcontactno(students[i].getcontactno());
+        }
+        copystudent[ssize].setname(obj.getname());
+        copystudent[ssize].setage(obj.getage());
+        copystudent[ssize].setcontactno(obj.getcontactno());
+        copystudent[ssize].setrollnumber(obj.getrollnumber());
+        ssizeinc();
+        delete[] students;
+        students = new Student[ssize];
+        for (int l = 0; l < ssize; l++)
+        {
+            students[l].setname(copystudent[l].getname());
+            students[l].setrollnumber(copystudent[l].getrollnumber());
+            students[l].setage(copystudent[l].getage());
+            students[l].setcontactno(copystudent[l].getcontactno());
+        }
+    }           //enrolling a student;
+    Filehandler::enroll(obj.getname(), obj.getrollnumber(), obj.getcontactno(), obj.getage());
+}
+void Student::remove(string rollnumber)
+{
+    setstudents();
+    bool flag = false;
+    for (int i = 0; i < ssize; i++)
+    {
+        if (students[i].getrollnumber() == rollnumber)
+        {
+            name = students[i].getname();
+            Student* copystudent = new Student[(ssize - 1)];
+            for (int k = 0; k < i; k++)
+            {
+                copystudent[k].setname(students[k].getname());
+                copystudent[k].setrollnumber(students[k].getrollnumber());
+                copystudent[k].setage(students[k].getage());
+                copystudent[k].setcontactno(students[k].getcontactno());
+            }
+            for (int j = i; j < (ssize - 1); j++)
+            {
+                copystudent[j].setname(students[j + 1].getname());
+                copystudent[j].setrollnumber(students[j + 1].getrollnumber());
+                copystudent[j].setage(students[j + 1].getage());
+                copystudent[j].setcontactno(students[j + 1].getcontactno());
+            }
+            ssizedec();
+            delete[] students;
+            students = new Student[ssize];
+            for (int l = 0; l < ssize; l++)
+            {
+                students[l].setname(copystudent[l].getname());
+                students[l].setrollnumber(copystudent[l].getrollnumber());
+                students[l].setage(copystudent[l].getage());
+                students[l].setcontactno(copystudent[l].getcontactno());
+            }
+            Filehandler::clear();
+            for (int p = 0; p < ssize; p++)
+            {
+                Filehandler::remove(students[p].getname(), students[p].getrollnumber(), students[p].getcontactno(), students[p].getage());
+            }
+            flag = true;
+        }
+    }
+    if (flag == true)
+    {
+        cout << name << " REMOVED SUCCESSFULLY\n";
+    }
+    else
+    {
+        cout << "NO SUCH STUDENT EXISTS\n";
+    }
+}
+void Student::edit(string croll, string name, string conatctno, int age, int op)
+{
+    setstudents();
+    if (op == 1)
+    {
+        for (int i = 0; i < ssize; i++)
+        {
+            if (students[i].getrollnumber() == croll)
+            {
+                students[i].setname(name);
+                break;
+            }
+        }
+    }
+    if (op == 2)
+    {
+        for (int i = 0; i < ssize; i++)
+        {
+            if (students[i].getrollnumber() == croll)
+            {
+                students[i].setage(age);
+                break;
+            }
+        }
+    }
+    if (op == 3)
+    {
+        for (int i = 0; i < ssize; i++)
+        {
+            if (students[i].getrollnumber() == croll)
+            {
+                students[i].setcontactno(conatctno);
+                break;
+            }
+        }
+    }
+    Filehandler::clear();
+    for (int i = 0; i < ssize; i++)
+    {
+        Filehandler::remove(students[i].getname(), students[i].getrollnumber(), students[i].getcontactno(), students[i].getage());
+    }
+}
+int Student::check(string rollnumber)
+{
+    setstudents();
+    for (int i = 0; i < ssize; i++)
+    {
+        if (students[i].getrollnumber() == rollnumber)
+        {
+            cout << "NAME" << "\t\t\t" << "Roll Number" << "\t" << "AGE\t" << "Contact Number\n";
+            cout << students[i].getname() << "\t\t" << students[i].getrollnumber() << "\t" << students[i].getage() << "\t" << students[i].getcontactno() << endl;
+            cout << endl;
+            return 1;
+        }
+        else
+        {
+            continue;
+        }
+    }
+    return 0;
+}
+void Student::display()
+{
+    Filehandler::display();
+}
+void Student::coursesdisplay(string rollnumber)
+{
+    setstudents();
+    for (int i = 0; i < ssize; i++)
+    {
+        if (students[i].getrollnumber() == rollnumber)
+        {
+            string textfile = students[i].getrollnumber();
+            string txt = ".txt";
+            textfile.append(txt);
+            Filehandler::studentcoursedisplay(textfile);
+            break;
+        }
+        else
+        {
+            continue;
+        }
+    }
+}
+
+                                     //COURSES FUNCTIONS
+void Course::setcourses()
+{
+    string c;
+    string n;
+    string nn;
+    string insf;
+    string insl;
+    int cred;
+    int limit;
+    clen = Filehandler::coursesizeset();
+    courses = new Course[clen];
+    ifstream infile("nCourses.txt");
+    int i = 0;
+    while (infile >> c >> n >> nn >> insf >> insl >> cred >> limit)
+    {
+        courses[i].setcode(c);
+        courses[i].setcredits(cred);
+        string space = " ";
+        n.append(space);
+        n.append(nn);
+        courses[i].setcoursename(n);
+        insf.append(space);
+        insf.append(insl);
+        courses[i].setinstructor(insf);
+        courses[i].setcapacity(limit);
+        i++;
+    }
+    infile.close();
+}
+int Course::check(string code)
+{
+    setcourses();
+    for (int i = 0; i < clen; i++)
+    {
+        if (courses[i].getcode() == code)
+        {
+            if (courses[i].getcapcity() == 50)
+            {
+                return 2;
+            }
+            else
+            {
+                return 1;
+            }
+        }
+    }
+    return 0;
+}
+void Course::cadd(Course& obj)
+{
+    setcourses();
+    capacity = 0;
+    if (courses == nullptr)
+    {
+        courses = new Course[clen + 1];
+        courses[clen].setcode(obj.getcode());
+        courses[clen].setcoursename(obj.getcoursename());
+        courses[clen].setinstructor(obj.getinstructor());
+        courses[clen].setcredits(obj.getcredits());
+        courses[clen].setcapacity(obj.getcapcity());
+        cleninc();
+    }
+    else
+    {
+        Course* copycourse = new Course[clen + 1];
+        for (int i = 0; i < clen; i++)
+        {
+            copycourse[i].setcoursename(courses[i].getcoursename());
+            copycourse[i].setcode(courses[i].getcode());
+            copycourse[i].setinstructor(courses[i].getinstructor());
+            copycourse[i].setcredits(courses[i].getcredits());
+            copycourse[i].setcapacity(courses[i].getcapcity());
+        }
+        copycourse[clen].setcoursename(obj.getcoursename());
+        copycourse[clen].setcode(obj.getcode());
+        copycourse[clen].setinstructor(obj.getinstructor());
+        copycourse[clen].setcredits(obj.getcredits());
+        copycourse[clen].setcapacity(obj.getcapcity());
+        cleninc();
+        delete[] courses;
+        courses = new Course[clen];
+        for (int i = 0; i < clen; i++)
+        {
+            courses[i].setcoursename(copycourse[i].getcoursename());
+            courses[i].setcode(copycourse[i].getcode());
+            courses[i].setinstructor(copycourse[i].getinstructor());
+            courses[i].setcredits(copycourse[i].getcredits());
+            courses[i].setcapacity(copycourse[i].getcapcity());
+        }
+    }           //enrolling a student;
+
+    Filehandler::courseadd(obj.code, obj.coursename, obj.Instructor, obj.capacity, obj.credits);
+}
+void Course::display()
+{
+    Filehandler::coursedisplay();
+}
+
+
+                                   //SYSTEM CLASS FUNCTIONS
+void System::Menu()
+{
+    int choice1 = 0;
+    cout << "1- Enroll a student.\n";
+    cout << "2- Course Registration.\n";
+    cout << "3- Attendence.\n";
+    cout << "4- Marks.\n";
+    cout << "5- Course withdraw.\n";
+    cout << "6- Exit\n";
+    cout << "\n\n";
+    cout << "ENTER YOUR CHOICE:";
+    Validator::input(choice1, 1, 6);
+    system("cls");
+    if (choice1 == 1)
+    {
+        System::enroll();
+    }
+    if (choice1 == 2)
+    {
+        System::coursereg();
+    }
+    if (choice1 == 3)
+    {
+        System::checkattend();                                        //attendance
+    }
+    if (choice1 == 4)
+    {
+        System::marksassign();
+    }
+    if (choice1 == 5)
+    {
+        System::coursewith();
+    }
+    if (choice1 == 6)
+    {
+        System::exit();
+        system("cls");                                          //exiting
+    }
+}
+void System::enroll()
+{
+    cout << "1- Display Already Enrolled Students.\n";
+    cout << "2- Add a Student.\n";
+    cout << "3- Remove a Student.\n";
+    cout << "4- Edit Student Detail.\n";
+    cout << "5- Back\n";
+    cout << "\n\n";
+    cout << "ENTER YOUR CHOICE:";
+    int choice;
+    Validator::input(choice, 1, 5);
+    system("cls");
+    if (choice == 1)
+    {
+        Student::display();
+        system("cls");
+        System::enroll();
+    }
+    if (choice == 2)
+    {
+        string name;
+        string rollno;
+        string contactno;
+        int age;
+        cout << "Enter Student Name:";
+        getline(cin >> ws, name);
+        cout << "Enter Student Age:";
+        cin >> age;
+        cout << "Enter Student Roll number:";
+        getline(cin >> ws, rollno);
+        cout << "Enter Student Contactno:";
+        getline(cin >> ws, contactno);
+        moveon();
+        system("cls");
+        Student obj;
+        obj.set(name, rollno, contactno, age);
+        Student::enroll(obj);
+        System::enroll();
+    }
+    if (choice == 3)
+    {
+        string rollno;
+        cout << "ENTER THE ROLL NUMBER OF STUDENT YOU WANT TO REMOVE:";
+        getline(cin >> ws, rollno);
+        Student::remove(rollno);
+        moveon();
+        system("cls");
+        System::enroll();
+    }
+    if (choice == 4)
+    {
+        string name = "0";
+        string rollno = "0";
+        string contactno = "0";
+        int age = 0;
+        cout << "ENTER THE ROLL NUMBER OF STUDENT WHOSE DETAIL YOU WANT TO EDIT:";
+        getline(cin >> ws, rollno);
+        int check = Student::check(rollno);
+        if (check == 1)
+        {
+            cout << "WHICH STUDENT DETAIL YOU WANT TO EDIT\n";
+            cout << "1- Name of Student.\n";
+            cout << "2- Age of Student.\n";
+            cout << "3- Contact Number of Student.\n";
+            cout << "4- Back\n";
+            cout << "ENTER YOUR CHOICE:";
+            int choice;
+            Validator::input(choice, 1, 4);
+            if (choice == 1)
+            {
+                cout << "ENTER NEW NAME:";
+                getline(cin >> ws, name);
+                Student::edit(rollno, name, contactno, age, choice);
+            }
+            if (choice == 2)
+            {
+                cout << "ENTER NEW AGE:";
+                cin >> age;
+                Student::edit(rollno, name, contactno, age, choice);
+            }
+            if (choice == 3)
+            {
+                cout << "ENTER NEW CONTACT NUMBER:";
+                getline(cin >> ws, contactno);
+                Student::edit(rollno, name, contactno, age, choice);
+            }
+            if (choice == 4)
+            {
+                system("cls");
+                System::enroll();
+            }
+        }
+        else
+        {
+            cout << "NO SUCH STUDENT EXISTS\n";
+            moveon();
+        }
+        system("cls");
+        System::enroll();
+    }
+    if (choice == 5)
+    {
+
+        system("cls");
+        System::Menu();
     }
 }
 int main()
