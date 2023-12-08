@@ -19,6 +19,18 @@ public:
     void coursedisplay();
     void studentcourse(string textfile, string name, string code, string instructor, int credits, int capacity);
     void studentcoursedisplay(string textfile);
+    void coursestudentfile(string textfile,string rollno,string name,int age,string contactnumber,float attendence,float marks);
+    int coursestudentsize(string textfile)
+    {
+        fstream infile(textfile, ios::in);
+        int linecount = 0;
+        string line;
+        while (getline(infile, line))
+        {
+            linecount++;
+        }
+        return linecount;
+    }
     static int sizeset()
     {
         fstream infile("nstudents.txt", ios::in);
@@ -77,29 +89,25 @@ public:
         courses1 = nullptr;
         students = nullptr;
     }
-    //Student(string rollnumber)
-    //{
-    //    setstudents();
-    //    for (int i = 0; i < ssize; i++)
-    //    {
-    //        if (students[i].getrollnumber() == rollnumber)
-    //        {
-    //            students[i].marks = 0;
-    //            students[i].attendence = 0;
-    //            string textfile = students[i].getrollnumber();
-    //            string txt = ".txt";
-    //            textfile.append(txt);
-    //            Filehandler::studentcourse(textfile, obj.getcoursename(), obj.getcode(), students[i].attendence, students[i].marks);
-    //            cout << "COURSE REGISTERED.\n";
-    //            moveon();
-    //            break;
-    //        }
-    //        else
-    //        {
-    //            continue;
-    //        }
-    //    }
-    //}
+    Student(string rollnumber)
+    {
+        setstudents();
+        for (int i = 0; i < ssize; i++)
+        {
+            if (students[i].getrollnumber() == rollnumber)
+            {
+                this->age = students[i].getage();
+                this->name = students[i].getname();
+                this->rollnumber = students[i].getrollnumber();
+                this->contactno = students[i].getcontactno();
+                break;
+            }
+            else
+            {
+                continue;
+            }
+        }
+    }
     void set(string name, string rollno, string contactno, int age);
     void display();
     void setstudents();
@@ -150,6 +158,22 @@ public:
     {
         return age;
     }
+    void setmarks(float marks)
+    {
+        this->marks = marks;
+    }
+    float getmarks()
+    {
+        return marks;
+    }
+    void setattendence(float attendence)
+    {
+        this->attendence = attendence;
+    }
+    float getattendence()
+    {
+        return attendence;
+    }
 };
 int Student::ssize = 0;
 class Course :public Filehandler
@@ -159,10 +183,10 @@ class Course :public Filehandler
     string coursename;
     int credits;
     int capacity;         //to be determined
-    Student* students;
+    Student* students1;
     Course* courses;
     static int clen;
-    static int slen;
+    int slen;
 public:
     Course()
     {
@@ -171,7 +195,7 @@ public:
         Instructor = "0";
         credits = 0;
         capacity = 0;
-        students = nullptr;
+        students1 = nullptr;
         courses = nullptr;
     }
     Course(string code, string coursename, string instructor, int capacity, int credits)
@@ -202,14 +226,6 @@ public:
             }
         }
 
-    }
-    static void sleninc() //student size increment
-    {
-        slen++;
-    }
-    static void slendec() //student size increment
-    {
-        slen--;
     }
     static void cleninc()  //course size increment
     {
@@ -259,9 +275,10 @@ public:
     int check(string code);
     void cadd(Course& obj);
     void display();
+    void studentadd(string code,Student &obj);
+    void setcoursesstudent(string textfile);
 };
 int Course::clen = 0;
-int Course::slen = 0;
 class Validator :public Filehandler
 {
 public:
@@ -360,6 +377,8 @@ public:
                     int check2 = obj.check(coursecode);
                     if (check2 == 1)
                     {
+                        Student obj1(rollno);
+                        Course::studentadd(coursecode, obj1);
                         Course obj(coursecode);
                         Student::Register(rollno, obj);
                         system("cls");
@@ -585,7 +604,12 @@ void Filehandler::studentcoursedisplay(string textfile)
     }
     infile.close();
 }
-
+void Filehandler::coursestudentfile(string textfile, string rollno, string name, int age, string contactnumber, float attendence, float marks)
+{
+    fstream outfile(textfile, ios::app);
+    outfile << rollno << "\t" << name << "\t" << age << "\t" << contactnumber<<"\t"<<attendence<<"\t"<<marks << endl;
+    outfile.close();
+}
 
                                                       //STUDENT CLASS FUNCTIONS
 void Student::Register(string rollnumber, Course& obj)
@@ -890,7 +914,111 @@ void Student::coursesdisplay(string rollnumber)
         }
     }
 }
+
+
+
                                      //COURSES FUNCTIONS
+
+void Course::studentadd(string code, Student& obj)
+{
+    setcourses();
+    setcourses();
+    for (int i = 0; i < clen; i++)
+    {
+        if (courses[i].getcode() == code)
+        {
+            if(courses[i].capacity ==50)
+            {
+                cout << "Capacity Full\n";
+                break;
+            }
+            else
+            {
+                obj.setmarks(0);
+                obj.setattendence(0);
+                courses[i].capacity += 1;
+                string textfile = code;
+                string txt = ".txt";
+                textfile.append(txt);
+                slen = Filehandler::coursestudentsize(textfile);
+                if (slen==0)
+                {
+                    slen = 1;
+                    students1 = new Student[slen + 1];
+                    students1[slen].setname(obj.getname());
+                    students1[slen].setcontactno(obj.getcontactno());
+                    students1[slen].setage(obj.getage());
+                    students1[slen].setrollnumber(obj.getrollnumber());
+                    students1[slen].setattendence(obj.getattendence());
+                    students1[slen].setmarks(obj.getmarks());
+                }
+                else
+                {
+                    setcoursesstudent(textfile);
+                    slen = Filehandler::coursestudentsize(textfile);
+                    Student* copystudent = new Student[slen + 1];
+                    for (int l = 0; l < slen; l++)
+                    {
+                        copystudent[l].setname(students1[l].getname());
+                        copystudent[l].setrollnumber(students1[l].getrollnumber());
+                        copystudent[l].setage(students1[l].getage());
+                        copystudent[l].setcontactno(students1[l].getcontactno());
+                        copystudent[l].setmarks(students1[l].getmarks());
+                        copystudent[l].setattendence(students1[l].getattendence());
+                    }
+                    copystudent[slen].setname(obj.getname());
+                    copystudent[slen].setage(obj.getage());
+                    copystudent[slen].setcontactno(obj.getcontactno());
+                    copystudent[slen].setrollnumber(obj.getrollnumber());
+                    copystudent[slen].setmarks(obj.getmarks());
+                    copystudent[slen].setattendence(obj.getattendence());
+                    slen++;
+                    delete[] students1;
+                    students1 = new Student[slen];
+                    for (int l = 0; l < slen; l++)
+                    {
+                        students1[l].setname(copystudent[l].getname());
+                        students1[l].setrollnumber(copystudent[l].getrollnumber());
+                        students1[l].setage(copystudent[l].getage());
+                        students1[l].setcontactno(copystudent[l].getcontactno());
+                        students1[l].setmarks(copystudent[l].getmarks());
+                        students1[l].setattendence(copystudent[l].getattendence());
+                    }
+                }
+                Filehandler::coursestudentfile(textfile, obj.getrollnumber(), obj.getname(), obj.getage(), obj.getcontactno(), obj.getattendence(), obj.getmarks());
+            }
+        }
+    }
+
+}
+void Course::setcoursesstudent(string textfile)
+{
+    string name1 = "0";
+    string contactno1;
+    int age1;
+    string rollno1;
+    string sname1;
+    float attendence;
+    float marks;
+    slen = Filehandler::coursestudentsize(textfile);
+    students1 = new Student[clen];
+    ifstream infile(textfile);
+    int i = 0;
+    while (infile >> rollno1 >> name1 >> sname1 >> age1 >> contactno1>>attendence>>marks)
+    {
+        students1[i].setage(age1);
+        students1[i].setcontactno(contactno1);
+        students1[i].setrollnumber(rollno1);
+        string space = " ";
+        name1.append(space);
+        name1.append(sname1);
+        students1[i].setname(name1);
+        students1[i].setmarks(marks);
+        students1[i].setattendence(attendence);
+        i++;
+    }
+    infile.close();
+}
 void Course::setcourses()
 {
     string c;
