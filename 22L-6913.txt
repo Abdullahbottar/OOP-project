@@ -1,0 +1,2 @@
+CS205	PAK STUDIES		Salman Mubarak		3		0
+CS204	LINEAR ALGEBRA		Mazhar Hussain		3		0

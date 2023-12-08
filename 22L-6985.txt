@@ -1,0 +1,2 @@
+CS204	LINEAR ALGEBRA		Mazhar Hussain		3		0
+CS202	ASSEMBLY LANG		Aleena Imran		4		0
