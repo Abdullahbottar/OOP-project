@@ -277,6 +277,7 @@ public:
     void display();
     void studentadd(string code,Student &obj);
     void setcoursesstudent(string textfile);
+    int checkstudent(string rollnumber, string code);
 };
 int Course::clen = 0;
 class Validator :public Filehandler
@@ -357,7 +358,7 @@ public:
             if (check1 == 1)
             {
                 system("cls");
-                cout << "1- ALREADY REGISTERED COURSE.\n";
+                cout << "1- ALREADY REGISTERED COURSES.\n";
                 cout << "2- REGISTER A COURSE.\n";
                 cout << "3- BACK\n";
                 cout << "ENTER YOUR CHOICE:";
@@ -377,11 +378,19 @@ public:
                     int check2 = obj.check(coursecode);
                     if (check2 == 1)
                     {
-                        Student obj1(rollno);
-                        Course::studentadd(coursecode, obj1);
-                        Course obj(coursecode);
-                        Student::Register(rollno, obj);
-                        system("cls");
+                        int check4=Course::checkstudent(rollno, coursecode);
+                        if (check4 == 0)
+                        {
+                            Student obj1(rollno);
+                            Course::studentadd(coursecode, obj1);
+                            Course obj(coursecode);
+                            Student::Register(rollno, obj);
+                            system("cls");
+                        }
+                        else
+                        {
+                            moveon();
+                        }
                     }
                     else if (check2 == 2)
                     {
@@ -515,7 +524,7 @@ void moveon()
         a = _getch();
     }
 }
-                                                 //FILE HANDLER FUNCTIONS DUE TO FORWARD DECLERATION
+                                                 //FILE HANDLER FUNCTIONS DUE TO FORWARD DECLARATION
 void Filehandler::enroll(string name, string rollno, string contactno, int age)
 {
     fstream outfile("nstudents.txt", ios::app);
@@ -635,6 +644,9 @@ void Student::Register(string rollnumber, Course& obj)
                 courses1->setcapacity(obj.getcapcity());
                 courses1->setinstructor(obj.getinstructor());
                 courses1->setcredits(obj.getcredits());
+                int l = courses1->getcapcity();
+                l++;
+                courses1->setcapacity(l);
             }
             else
             {
@@ -654,6 +666,9 @@ void Student::Register(string rollnumber, Course& obj)
                 copycourse[csize].setinstructor(obj.getinstructor());
                 copycourse[csize].setcredits(obj.getcredits());
                 copycourse[csize].setcapacity(obj.getcapcity());
+                int l = copycourse->getcapcity();
+                l++;
+                copycourse->setcapacity(l);
                 csize++;
                 delete[] courses1;
                 courses1 = new Course[csize];
@@ -936,7 +951,9 @@ void Course::studentadd(string code, Student& obj)
             {
                 obj.setmarks(0);
                 obj.setattendence(0);
-                courses[i].capacity += 1;
+                int inc = courses[i].getcapcity();
+                inc++;
+                courses[i].setcapacity(inc);
                 string textfile = code;
                 string txt = ".txt";
                 textfile.append(txt);
@@ -1066,6 +1083,32 @@ int Course::check(string code)
         }
     }
     return 0;
+}
+int Course::checkstudent(string rollnumber, string code)
+{
+    setcourses();
+    int see = 0;
+    for (int i = 0; i < clen; i++)
+    {
+        if (courses[i].getcode() == code)
+        {
+            string textfile = code;
+            string txt = ".txt";
+            textfile.append(txt);
+            setcoursesstudent(textfile);
+            clen = Filehandler::coursestudentsize(textfile);
+            for (int k = 0; k < clen; k++)
+            {
+                if (students1[k].getrollnumber() == rollnumber)
+                {
+                    cout << "STUDENT ALREADY REGISTERED\n";
+                    see = 1;
+                    return see;
+                }
+            }
+        }
+    }
+    return see;
 }
 void Course::cadd(Course& obj)
 {
