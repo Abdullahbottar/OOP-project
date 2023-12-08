@@ -17,9 +17,11 @@ public:
     void clear();
     void courseadd(string code, string cname, string Instructor, int credits, int cap);
     void coursedisplay();
-    void studentcourse(string textfile, string name, string code, string instructor, int credits, int capacity);
+    void studentcourse(string textfile, string name, string code, string instructor, int credits, int capacity, float marks, float attendence);
     void studentcoursedisplay(string textfile);
     void coursestudentfile(string textfile,string rollno,string name,int age,string contactnumber,float attendence,float marks);
+    void clearfile(string textfile);
+    void updatecourse(Course  &obj);
     int coursestudentsize(string textfile)
     {
         fstream infile(textfile, ios::in);
@@ -395,6 +397,7 @@ public:
                     else if (check2 == 2)
                     {
                         cout << "CAPACITY FULL OF COURSE\n";
+                        moveon();
                     }
                     else
                     {
@@ -524,7 +527,7 @@ void moveon()
         a = _getch();
     }
 }
-                                                 //FILE HANDLER FUNCTIONS DUE TO FORWARD DECLARATION
+                                                 //FILE HANDLER FUNCTIONS DUE TO FORWARD DECLERATION
 void Filehandler::enroll(string name, string rollno, string contactno, int age)
 {
     fstream outfile("nstudents.txt", ios::app);
@@ -582,33 +585,35 @@ void Filehandler::coursedisplay()
     }
     infile.close();
 }
-void Filehandler::studentcourse(string textfile, string name, string code, string instructor,int credits,int capacity)
+void Filehandler::studentcourse(string textfile, string name, string code, string instructor,int credits,int capacity,float marks,float attendence)
 {
     fstream outfile(textfile, ios::app);
-    outfile << code << "\t" << name << "\t\t" <<instructor<<"\t\t"<<credits<<"\t\t"<< capacity << endl;
+    outfile << code << "\t" << name << "\t\t" <<instructor<<"\t\t"<<credits<<"\t\t"<< capacity <<"\t\t"<<marks<<"\t\t"<<attendence<< endl;
     outfile.close();
 }
 void Filehandler::studentcoursedisplay(string textfile)
 {
     ifstream infile(textfile);
-    cout << "CODE" << "\t" << "NAME" << "\t\t\t" << "INSTRUCTOR" << "\t\t" << "CREDITS" << "\t" << "CAPACITY\n";
+    cout << "CODE" << "\t" << "NAME" << "\t\t\t" << "INSTRUCTOR" << "\t" << "CREDITS" << "\t\t" << "MARKS"<<"\t"<<"ATTENDENCE\n";
     string name, code, instructor, nname;
     int credits;
     int cap;
+    float mar;
+    float attend;
     string insf;
     string insl;
-    while (infile >> code >> name >> nname>>insf>>insl>>credits>>cap)
+    while (infile >> code >> name >> nname>>insf>>insl>>credits>>cap>>mar>>attend)
     {
         int len = name.size();
         len += nname.size();
 
         if (len > 15)
         {
-            cout << code << "\t" << name << " " << nname << "\t\t" <<insf <<" "<<insl<<"\t   " << credits << "\t" << cap << endl;
+            cout << code << "\t" << name << " " << nname << "\t\t" <<insf <<" "<<insl<<"\t   " << credits << "\t\t" << mar << "\t" << attend <<"%" << endl;
         }
         else
         {
-            cout << code << "\t" << name << " " << nname << "\t\t" << insf << " " << insl << "\t   " << credits << "\t" << cap <<endl;
+            cout << code << "\t" << name << " " << nname << "\t\t" << insf << " " << insl << "\t   " << credits << "\t\t" << mar <<"\t" <<attend << "%" << endl;
         }
     }
     infile.close();
@@ -618,6 +623,17 @@ void Filehandler::coursestudentfile(string textfile, string rollno, string name,
     fstream outfile(textfile, ios::app);
     outfile << rollno << "\t" << name << "\t" << age << "\t" << contactnumber<<"\t"<<attendence<<"\t"<<marks << endl;
     outfile.close();
+}
+void Filehandler::clearfile(string textfile)
+{
+    ofstream outfile(textfile, ios::trunc);
+    outfile.close();
+}
+void Filehandler::updatecourse(Course &obj)
+{
+     fstream outfile("nCourses.txt", ios::app);
+     outfile << obj.getcode() << "\t" <<obj.getcoursename() << "\t" << obj.getinstructor() << "\t" << obj.getcredits() << "\t" << obj.getcapcity() << endl;
+     outfile.close();
 }
 
                                                       //STUDENT CLASS FUNCTIONS
@@ -681,7 +697,7 @@ void Student::Register(string rollnumber, Course& obj)
                     courses1[l].setcapacity(copycourse[l].getcapcity());
                 }
             }
-            Filehandler::studentcourse(textfile, obj.getcoursename(), obj.getcode(), obj.getinstructor(),obj.getcredits(),obj.getcapcity());
+            Filehandler::studentcourse(textfile, obj.getcoursename(), obj.getcode(), obj.getinstructor(),obj.getcredits(),obj.getcapcity(),students[i].getmarks(), students[i].getattendence());
             moveon();
             break;
         }
@@ -1003,6 +1019,13 @@ void Course::studentadd(string code, Student& obj)
                     }
                 }
                 Filehandler::coursestudentfile(textfile, obj.getrollnumber(), obj.getname(), obj.getage(), obj.getcontactno(), obj.getattendence(), obj.getmarks());
+                cout << courses[i].capacity << endl;
+                string ntext = "nCourses.txt";
+                Filehandler::clearfile(ntext);
+                for (int k = 0; k < clen; k++)
+                {
+                    Filehandler::updatecourse(courses[k]);
+                }
             }
         }
     }
