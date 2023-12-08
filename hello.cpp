@@ -283,6 +283,7 @@ public:
     int checkstudent(string rollnumber, string code);
     void displaycoursestudent(string coursecode);
     void setstudentmarks(string code, float marks,string rollno);
+    void setstudentattendence(string code, float attendence, string rollno);
 };
 int Course::clen = 0;
 class Validator :public Filehandler
@@ -464,7 +465,7 @@ public:
         {
             string coursecode;
             Course obj;
-            cout << "ENTER THE COURSE CODE YOU WANT TO SEE STUDENT MARKS:";
+            cout << "ENTER THE COURSE CODE WHOSE STUDENT MARKS YOU WANT TO SEE:";
             getline(cin >> ws, coursecode);
             int check2 = obj.check(coursecode);
             system("cls");
@@ -486,13 +487,11 @@ public:
                     cout << "ENTER THE MARKS:";
                     cin >> attend;
                     Course::setstudentmarks(coursecode, attend, rollno);
-                    moveon();
                 }
             }
             else
             {
                 cout << "NO SUCH COURSE EXISTS\n";
-                moveon();
             }
             moveon();
             system("cls");
@@ -516,7 +515,6 @@ public:
         system("cls");
         if (choice == 1)
         {
-
             system("cls");
             System::coursewith();
         }
@@ -544,13 +542,58 @@ public:
         system("cls");
         if (choice == 1)
         {
-
+            string coursecode;
+            Course obj;
+            cout << "ENTER THE COURSE CODE WHOSE STUDENT MARKS YOU WANT TO SEE:";
+            getline(cin >> ws, coursecode);
+            int check2 = obj.check(coursecode);
+            system("cls");
+            if (check2 == 1 || check2 == 2)
+            {
+                Course::displaycoursestudent(coursecode);
+            }
+            else
+            {
+                cout << "NO SUCH COURSE EXISTS\n";
+                moveon();
+                system("cls");
+            }
             system("cls");
             System::checkattend();
         }
         if (choice == 2)
         {
-
+            string coursecode;
+            Course obj;
+            cout << "ENTER THE COURSE CODE WHOSE STUDENT ATTENDENCE YOU WANT TO MARK:";
+            getline(cin >> ws, coursecode);
+            int check2 = obj.check(coursecode);
+            system("cls");
+            if (check2 == 1 || check2 == 2)
+            {
+                Course::displaycoursestudent(coursecode);
+                string rollno;
+                cout << "ENTER THE STUDENTS ROLL NUMBER WHOSE ATTENDENCE YOU WANT TO CHANGE:";
+                getline(cin >> ws, rollno);
+                int check4 = Course::checkstudent(rollno, coursecode);
+                if (check4 == 0)
+                {
+                    cout << "SUCH STUDENT IS NOT REGISTERED IN THIS COURSE\n";
+                }
+                else
+                {
+                    int ch = Student::check(rollno);
+                    float attend;
+                    cout << "ENTER THE ATTENDENCE:";
+                    cin >> attend;
+                    Course::setstudentattendence(coursecode, attend, rollno);
+                }
+            }
+            else
+            {
+                cout << "NO SUCH COURSE EXISTS\n";
+            }
+            moveon();
             system("cls");
             System::checkattend();
         }
@@ -577,7 +620,7 @@ void moveon()
         a = _getch();
     }
 }
-                                                 //FILE HANDLER FUNCTIONS DUE TO FORWARD DECLARATION
+                                                 //FILE HANDLER FUNCTIONS DUE TO FORWARD DECLERATION
 void Filehandler::enroll(string name, string rollno, string contactno, int age)
 {
     fstream outfile("nstudents.txt", ios::app);
@@ -1156,6 +1199,34 @@ void Course::setstudentmarks(string code, float marks,string rollno)
                 if (students1[j].getrollnumber() == rollno)
                 {
                     students1[j].setmarks(marks);
+                }
+            }
+            Filehandler::clearfile(textfile);
+            for (int k = 0; k < slen; k++)
+            {
+                Filehandler::coursestudentfile(textfile, students1[k].getrollnumber(), students1[k].getname(), students1[k].getage(), students1[k].getcontactno(), students1[k].getattendence(), students1[k].getmarks());
+            }
+            break;
+        }
+    }
+}
+void Course::setstudentattendence(string code, float attendence, string rollno)
+{
+    setcourses();
+    for (int i = 0; i < clen; i++)
+    {
+        if (courses[i].getcode() == code)
+        {
+            string textfile = code;
+            string txt = ".txt";
+            textfile.append(txt);
+            slen = Filehandler::coursestudentsize(textfile);
+            setcoursesstudent(textfile);
+            for (int j = 0; j < slen; j++)
+            {
+                if (students1[j].getrollnumber() == rollno)
+                {
+                    students1[j].setattendence(attendence);
                 }
             }
             Filehandler::clearfile(textfile);
