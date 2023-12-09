@@ -284,6 +284,9 @@ public:
     void displaycoursestudent(string coursecode);
     void setstudentmarks(string code, float marks,string rollno);
     void setstudentattendence(string code, float attendence, string rollno);
+    void editstudentdetail(string code, string rollno, int age, string edit, int op);
+    void setstudentfilemars(string code, string rollno,string edit);
+    void removestudent(string rollno);
 };
 int Course::clen = 0;
 class Validator :public Filehandler
@@ -487,6 +490,7 @@ public:
                     cout << "ENTER THE MARKS:";
                     cin >> attend;
                     Course::setstudentmarks(coursecode, attend, rollno);
+                    Course::setstudentfilemars(coursecode, rollno, rollno);
                 }
             }
             else
@@ -587,6 +591,7 @@ public:
                     cout << "ENTER THE ATTENDENCE:";
                     cin >> attend;
                     Course::setstudentattendence(coursecode, attend, rollno);
+                    Course::setstudentfilemars(coursecode, rollno, rollno);
                 }
             }
             else
@@ -620,7 +625,7 @@ void moveon()
         a = _getch();
     }
 }
-                                                 //FILE HANDLER FUNCTIONS DUE TO FORWARD DECLARATION
+                                                 //FILE HANDLER FUNCTIONS DUE TO FORWARD DECLERATION
 void Filehandler::enroll(string name, string rollno, string contactno, int age)
 {
     fstream outfile("nstudents.txt", ios::app);
@@ -825,7 +830,10 @@ void Student::setstudentscourses(string rollnumber)
     string insl;
     int cred;
     int limit;
-    csize = Filehandler::coursesizeset();
+    //float mars;
+    //float attend;
+    csize = Filehandler::studentcoursesize(rollnumber);
+    cout << csize << endl;
     courses1 = new Course[csize];
     ifstream infile(rollnumber);
     int i = 0;
@@ -958,6 +966,10 @@ void Student::remove(string rollnumber)
             {
                 Filehandler::remove(students[p].getname(), students[p].getrollnumber(), students[p].getcontactno(), students[p].getage());
             }
+            string textfile = rollnumber;
+            string text = ".txt";
+            textfile.append(text);
+            Filehandler::clearfile(textfile);
             flag = true;
         }
     }
@@ -972,6 +984,9 @@ void Student::remove(string rollnumber)
 }
 void Student::edit(string croll, string name, string conatctno, int age, int op)
 {
+    string textfile = croll;
+    string text = ".txt";
+    textfile.append(text);
     setstudents();
     if (op == 1)
     {
@@ -1148,7 +1163,7 @@ void Course::setcoursesstudent(string textfile)
     float attendence;
     float marks;
     slen = Filehandler::coursestudentsize(textfile);
-    students1 = new Student[clen];
+    students1 = new Student[slen];
     ifstream infile(textfile);
     int i = 0;
     while (infile >> rollno1 >> name1 >> sname1 >> age1 >> contactno1>>marks>>attendence)
@@ -1298,8 +1313,8 @@ int Course::checkstudent(string rollnumber, string code)
             string txt = ".txt";
             textfile.append(txt);
             setcoursesstudent(textfile);
-            clen = Filehandler::coursestudentsize(textfile);
-            for (int k = 0; k < clen; k++)
+            slen = Filehandler::coursestudentsize(textfile);
+            for (int k = 0; k < slen; k++)
             {
                 if (students1[k].getrollnumber() == rollnumber)
                 {
@@ -1355,6 +1370,86 @@ void Course::cadd(Course& obj)
     }           //enrolling a student;
 
     Filehandler::courseadd(obj.code, obj.coursename, obj.Instructor, obj.capacity, obj.credits);
+}
+void Course::setstudentfilemars(string code, string rollno, string edit)
+{
+    string textfile = rollno;
+    string text = ".txt";
+    textfile.append(text);
+    Filehandler::clearfile(textfile);
+    setcourses();
+    for (int i = 0; i < clen; i++)
+    {
+        string textfile1 = courses[i].getcode();
+        textfile1.append(text);
+        setcoursesstudent(textfile1);
+        slen = Filehandler::coursestudentsize(textfile1);
+        for (int k = 0; k < slen; k++)
+        {
+            if (students1[k].getrollnumber() == rollno)
+            {
+                Filehandler::studentcourse(textfile, courses[i].getcoursename(), courses[i].getcode(), courses[i].getinstructor(), courses[i].getcredits(), courses[i].getcapcity(), students1[k].getmarks(), students1[k].getattendence());
+            }
+        }
+    }
+}
+void Course::removestudent(string rollno)
+{
+    string text = ".txt";
+    setcourses();
+    for (int i = 0; i < clen; i++)
+    {
+        string textfile1 = courses[i].getcode();
+        textfile1.append(text);
+        setcoursesstudent(textfile1);
+        slen = Filehandler::coursestudentsize(textfile1);
+        for (int g = 0; g < slen; g++)
+        {
+            if (students1[g].getrollnumber() == rollno)
+            {
+                Student* copystudent = new Student[(slen - 1)];
+                for (int k = 0; k < g; k++)
+                {
+                    copystudent[k].setname(students1[k].getname());
+                    copystudent[k].setrollnumber(students1[k].getrollnumber());
+                    copystudent[k].setage(students1[k].getage());
+                    copystudent[k].setcontactno(students1[k].getcontactno());
+                    copystudent[k].setattendence(students1[k].getattendence());
+                    copystudent[k].setmarks(students1[k].getmarks());
+                }
+                for (int j = g; j < (slen - 1); j++)
+                {
+                    copystudent[j].setname(students1[j + 1].getname());
+                    copystudent[j].setrollnumber(students1[j + 1].getrollnumber());
+                    copystudent[j].setage(students1[j + 1].getage());
+                    copystudent[j].setcontactno(students1[j + 1].getcontactno());
+                    copystudent[j].setattendence(students1[j+1].getattendence());
+                    copystudent[j].setmarks(students1[j+1].getmarks());
+                }
+                slen--;
+                delete[] students1;
+                students1 = new Student[slen];
+                for (int l = 0; l < slen; l++)
+                {
+                    students1[l].setname(copystudent[l].getname());
+                    students1[l].setrollnumber(copystudent[l].getrollnumber());
+                    students1[l].setage(copystudent[l].getage());
+                    students1[l].setcontactno(copystudent[l].getcontactno());
+                    students1[l].setmarks(copystudent[l].getmarks());
+                    students1[l].setattendence(copystudent[l].getattendence());
+                }
+                Filehandler::clearfile(textfile1);
+                for (int p = 0; p < slen; p++)
+                {
+                    Filehandler::coursestudentfile(textfile1, students1[p].getrollnumber(), students1[p].getname(), students1[p].getage(), students1[p].getcontactno(), students1[p].getattendence(), students1[p].getmarks());
+                }
+            }
+        }
+    }
+}
+void Course::editstudentdetail(string rollno, string code, int age, string edit, int op)
+{
+
 }
 void Course::display()
 {
@@ -1447,6 +1542,7 @@ void System::enroll()
         cout << "ENTER THE ROLL NUMBER OF STUDENT YOU WANT TO REMOVE:";
         getline(cin >> ws, rollno);
         Student::remove(rollno);
+        Course::removestudent(rollno);
         moveon();
         system("cls");
         System::enroll();
