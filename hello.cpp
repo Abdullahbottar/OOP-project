@@ -284,7 +284,7 @@ public:
     void displaycoursestudent(string coursecode);
     void setstudentmarks(string code, float marks,string rollno);
     void setstudentattendence(string code, float attendence, string rollno);
-    void editstudentdetail(string code, string rollno, int age, string edit, int op);
+    void editstudentdetail(string rollno, int age, string edit, int op);
     void setstudentfilemars(string code, string rollno,string edit);
     void removestudent(string rollno);
 };
@@ -1447,9 +1447,40 @@ void Course::removestudent(string rollno)
         }
     }
 }
-void Course::editstudentdetail(string rollno, string code, int age, string edit, int op)
+void Course::editstudentdetail(string rollno, int age, string edit, int op)
 {
-
+    string text = ".txt";
+    setcourses();
+    for (int i = 0; i < clen; i++)
+    {
+        string textfile1 = courses[i].getcode();
+        textfile1.append(text);
+        setcoursesstudent(textfile1);
+        slen = Filehandler::coursestudentsize(textfile1);
+        for (int j = 0; j < slen; j++)
+        {
+            if (students1[j].getrollnumber() == rollno)
+            {
+                if (op == 1)
+                {
+                    students1[j].setname(edit);
+                }
+                if (op == 2)
+                {
+                    students1[j].setage(age);
+                }
+                if (op == 3)
+                {
+                    students1[j].setcontactno(edit);
+                }
+                Filehandler::clearfile(textfile1);
+                for (int p = 0; p < slen; p++)
+                {
+                    Filehandler::coursestudentfile(textfile1, students1[p].getrollnumber(), students1[p].getname(), students1[p].getage(), students1[p].getcontactno(), students1[p].getattendence(), students1[p].getmarks());
+                }
+            }
+        }
+    }
 }
 void Course::display()
 {
@@ -1571,18 +1602,21 @@ void System::enroll()
                 cout << "ENTER NEW NAME:";
                 getline(cin >> ws, name);
                 Student::edit(rollno, name, contactno, age, choice);
+                Course::editstudentdetail(rollno, age, name, choice);
             }
             if (choice == 2)
             {
                 cout << "ENTER NEW AGE:";
                 cin >> age;
                 Student::edit(rollno, name, contactno, age, choice);
+                Course::editstudentdetail(rollno, age, name, choice);
             }
             if (choice == 3)
             {
                 cout << "ENTER NEW CONTACT NUMBER:";
                 getline(cin >> ws, contactno);
                 Student::edit(rollno, name, contactno, age, choice);
+                Course::editstudentdetail(rollno, age, contactno, choice);
             }
             if (choice == 4)
             {
