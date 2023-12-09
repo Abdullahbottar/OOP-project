@@ -625,7 +625,7 @@ void moveon()
         a = _getch();
     }
 }
-                                                 //FILE HANDLER FUNCTIONS DUE TO FORWARD DECLERATION
+                                                 //FILE HANDLER FUNCTIONS DUE TO FORWARD DECLARATION
 void Filehandler::enroll(string name, string rollno, string contactno, int age)
 {
     fstream outfile("nstudents.txt", ios::app);
