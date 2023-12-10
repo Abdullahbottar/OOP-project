@@ -1550,7 +1550,7 @@ void Course::removestudent(string rollno)
                 int dec = courses[i].getcapcity();
                 dec--;
                 courses[i].setcapacity(dec);
-                Filehandler::clearfile("nCourses");
+                Filehandler::clearfile("nCourses.txt");
                 for (int k = 0; k < clen; k++)
                 {
                     Filehandler::updatecourse(courses[k]);
