@@ -540,9 +540,9 @@ class System :public Validator, public Student, public Course
 {
 public:
     System() {}
-    void Menu();
-    void enroll();
-    void coursereg()
+    void Menu();                       //MENU OPTION
+    void enroll();                     //ENROLLMENT OPTION
+    void coursereg()                   //COURSE REGISTRATION OPTION
     {
         cout << "1- Available Courses.\n";
         cout << "2- Registered Courses.\n";
@@ -670,7 +670,7 @@ public:
             System::Menu();
         }
     }
-    void marksassign()
+    void marksassign()                 //MARKS ASSIGNMENT OPTION 
     {
         cout << "1- Display Marks.\n";
         cout << "2- Assign Marks.\n";
@@ -752,7 +752,7 @@ public:
             System::Menu();
         }
     }
-    void coursewith()
+    void coursewith()                  //COURSE WITHDRAWL OPTION
     {
         cout << "1- Enrolled Courses.\n";
         cout << "2- Drop Course.\n";
@@ -824,7 +824,7 @@ public:
             System::Menu();
         }
     }
-    void checkattend()
+    void checkattend()                 //CHECK ATTENDANCE OPTION
     {
         cout << "1- Check Attendence.\n";
         cout << "2- Mark Attendence.\n";
@@ -907,7 +907,7 @@ public:
             System::Menu();
         }
     }
-    void exit()
+    void exit()                        //EXIT OPTION
     {
         cout << "FLEX EXITED\n";
         moveon();
@@ -925,13 +925,13 @@ void moveon()
     }
 }
                                                  //FILE HANDLER FUNCTIONS DUE TO FORWARD DECLERATION
-void Filehandler::enroll(string name, string rollno, string contactno, int age)
+void Filehandler::enroll(string name, string rollno, string contactno, int age) // ADDS STUDENT TO TOTAL STUDENT FILE
 {
     fstream outfile("nstudents.txt", ios::app);
     outfile << rollno << "\t" << name << "\t" << age << "\t" << contactno << endl;
     outfile.close();
 }
-void Filehandler::display()
+void Filehandler::display()                                                     //DISPLAYS STUDENTS
 {
     ifstream infile("nstudents.txt");
     cout << "Roll NUMBER" << "\t\t" << "NAME" << "\t\t\t" << "AGE" << "\t\t" << "CONTACT INFORMATION\n";
@@ -944,23 +944,23 @@ void Filehandler::display()
     moveon();
     infile.close();
 }
-void Filehandler::remove(string name, string rollno, string contactno, int age)
+void Filehandler::remove(string name, string rollno, string contactno, int age) //REMOVES A STUDENT
 {
     ofstream outfile("nstudents.txt", ios::app);
     outfile << rollno << "\t" << name << "\t" << age << "\t" << contactno << endl;
 }
-void Filehandler::clear()
+void Filehandler::clear()                                                       //CLEARS STUDENT FILE
 {
     ofstream outfile("nstudents.txt", ios::trunc);
     outfile.close();
 }
-void Filehandler::courseadd(string code, string cname, string Instructor, int credits, int cap)
+void Filehandler::courseadd(string code, string cname, string Instructor, int credits, int cap)//ADDS A COURSE
 {
     fstream outfile("nCourses.txt", ios::app);
     outfile << code << "\t" << cname << "\t" << Instructor << "\t" << credits << "\t" << cap << endl;
     outfile.close();
 }
-void Filehandler::coursedisplay()
+void Filehandler::coursedisplay()                                               //DISPLAYS COURSES
 {
     ifstream infile("nCourses.txt");
     cout << "CODE" << "\t" << "NAME" << "\t\t\t" << "INSTRUCTOR" << "\t\t" << "CREDITS" << "\t" << "CAPACITY\n";
@@ -987,8 +987,8 @@ void Filehandler::studentcourse(string textfile, string name, string code, strin
     fstream outfile(textfile, ios::app);
     outfile << code << "\t" << name << "\t\t" <<instructor<<"\t\t"<<credits<<"\t\t"<< capacity <<"\t\t"<<marks<<"\t\t"<<attendence<< endl;
     outfile.close();
-}
-void Filehandler::studentcoursedisplay(string textfile)
+}                                                                                //ADDS STUDENTS FILE REGISTERED COURSES
+void Filehandler::studentcoursedisplay(string textfile)                          //DISPLAYS STUDENTS FILES REGISTERED COURSES
 {
     ifstream infile(textfile);
     cout << "CODE" << "\t" << "NAME" << "\t\t\t" << "INSTRUCTOR" << "\t" << "CREDITS" << "\t\t" << "MARKS"<<"\t"<<"ATTENDENCE\n";
@@ -1020,19 +1020,19 @@ void Filehandler::coursestudentfile(string textfile, string rollno, string name,
     fstream outfile(textfile, ios::app);
     outfile << rollno << "\t" << name << "\t" << age << "\t" << contactnumber<<"\t"<<marks<<"\t"<<attendence << endl;
     outfile.close();
-}
-void Filehandler::clearfile(string textfile)
+}                                                                         // ADDS STUDENT TO A COURSE FILE
+void Filehandler::clearfile(string textfile)                                     //CLEARS A FILE ACCORDING TO THEIR NAME 
 {
     ofstream outfile(textfile, ios::trunc);
     outfile.close();
 }
-void Filehandler::updatecourse(Course &obj)
+void Filehandler::updatecourse(Course &obj)                                      //UPDATES A COURSE
 {
      fstream outfile("nCourses.txt", ios::app);
      outfile << obj.getcode() << "\t" <<obj.getcoursename() << "\t\t" << obj.getinstructor() << "\t" << obj.getcredits() << "\t" << obj.getcapcity() << endl;
      outfile.close();
 }
-void Filehandler::displaycoursestudents(string textfile,string cname)
+void Filehandler::displaycoursestudents(string textfile,string cname)            //DISPLAYS STUDENTS OF CERTAIN COURSE
 {
     ifstream infile(textfile);
     cout << cname << endl;
@@ -1050,7 +1050,7 @@ void Filehandler::displaycoursestudents(string textfile,string cname)
 }
 
                                                       //STUDENT CLASS FUNCTIONS
-void Student::Register(string rollnumber, Course& obj)
+void Student::Register(string rollnumber, Course& obj)       //REGISTERS A STUDENT COURSE ACCORDING TO ROLLNUMBER  IN SYSTEM
 {
     setstudents();
     for (int i = 0; i < ssize; i++)
@@ -1120,7 +1120,7 @@ void Student::Register(string rollnumber, Course& obj)
         }
     }
 }
-void Student::setstudentscourses(string rollnumber)
+void Student::setstudentscourses(string rollnumber)          //READS DATA FROM FILE AND SETS THE STUDENTS COURSES 
 {
     string c;
     string n;
@@ -1153,14 +1153,14 @@ void Student::setstudentscourses(string rollnumber)
     }
     infile.close();
 }
-void Student::set(string name, string rollno, string contactno, int age)
+void Student::set(string name, string rollno, string contactno, int age)     //SETS STUDENTS NAME ,ROLL NUMBER ETC
 {
     this->name = name;
     this->contactno = contactno;
     this->age = age;
     this->rollnumber = rollno;
 }
-void Student::setstudents()
+void Student::setstudents()                                          //READS DATA FROM STUDENTS FILE AND SETS THE STUDENT ARRAY IN STUDENTS OBJECT
 {
     string name1 = "0";
     string contactno1;
@@ -1184,7 +1184,7 @@ void Student::setstudents()
     }
     infile.close();
 }
-void Student::enroll(Student& obj)
+void Student::enroll(Student& obj)                                   //ADDS A STUDENT TO SYSTEM
 {
     setstudents();
     this->name = obj.name;
@@ -1227,7 +1227,7 @@ void Student::enroll(Student& obj)
     }           //enrolling a student;
     Filehandler::enroll(obj.getname(), obj.getrollnumber(), obj.getcontactno(), obj.getage());
 }
-void Student::remove(string rollnumber)
+void Student::remove(string rollnumber)                              //REMOVES A STUDENT
 {
     setstudents();
     bool flag = false;
@@ -1282,7 +1282,7 @@ void Student::remove(string rollnumber)
         cout << "NO SUCH STUDENT EXISTS\n";
     }
 }
-void Student::edit(string croll, string name, string conatctno, int age, int op)
+void Student::edit(string croll, string name, string conatctno, int age, int op)      //EDIT STUDENTS DETAIL
 {
     string textfile = croll;
     string text = ".txt";
@@ -1327,7 +1327,7 @@ void Student::edit(string croll, string name, string conatctno, int age, int op)
         Filehandler::remove(students[i].getname(), students[i].getrollnumber(), students[i].getcontactno(), students[i].getage());
     }
 }
-int Student::check(string rollnumber)
+int Student::check(string rollnumber)                                      //CHECKS IF SUCH ROLLNUMBER OF STUDENT EXISTS
 {
     setstudents();
     for (int i = 0; i < ssize; i++)
@@ -1346,7 +1346,7 @@ int Student::check(string rollnumber)
     }
     return 0;
 }
-int Student::checkcourse(string rollnumber,string code)
+int Student::checkcourse(string rollnumber,string code)                        //CHECKS IF A STUDENT HAS REGISTERED SUCH COURSE
 {
     setstudents();
     for (int i = 0; i < ssize; i++)
@@ -1407,11 +1407,11 @@ int Student::checkcourse(string rollnumber,string code)
     }
     return 0;
 }
-void Student::display()
+void Student::display()                                                       //DISPLAYS TOTAL STUDENTS IN SYSTEM
 {
     Filehandler::display();
 }
-void Student::coursesdisplay(string rollnumber)
+void Student::coursesdisplay(string rollnumber)                                //DISPLAYS A=STUDENTS REGISTERED COURSES
 {
     setstudents();
     for (int i = 0; i < ssize; i++)
@@ -1435,7 +1435,7 @@ void Student::coursesdisplay(string rollnumber)
 
                                      //COURSES FUNCTIONS
 
-void Course::studentadd(string code, Student& obj)
+void Course::studentadd(string code, Student& obj)                            //ADDS A STUDENT TO COURSE CLASS
 {
     setcourses();
     for (int i = 0; i < clen; i++)
@@ -1514,7 +1514,7 @@ void Course::studentadd(string code, Student& obj)
     }
 
 }
-void Course::setcoursesstudent(string textfile)
+void Course::setcoursesstudent(string textfile)                               //READS DATA FROM COURSE FILE AND SETS ITS STUDENTS ARRAY
 {
     string name1 = "0";
     string contactno1;
@@ -1542,7 +1542,7 @@ void Course::setcoursesstudent(string textfile)
     }
     infile.close();
 }
-void Course::displaycoursestudent(string code)
+void Course::displaycoursestudent(string code)                                //DISPLAYS STUDENTS REGISTERED IN COURSES
 {
     setcourses();
     for (int i = 0; i < clen; i++)
@@ -1557,7 +1557,7 @@ void Course::displaycoursestudent(string code)
         }
     }
 }
-int Course::checkcoursehasstudent(string code)
+int Course::checkcoursehasstudent(string code)                                //CHECKS THAT ARE STUDENTS EVEN REGISTERED IN COURSE
 {
     setcourses();
     for (int i = 0; i < clen; i++)
@@ -1581,7 +1581,7 @@ int Course::checkcoursehasstudent(string code)
         }
     }
 }
-void Course::setstudentmarks(string code, float marks,string rollno)
+void Course::setstudentmarks(string code, float marks,string rollno)          //SETS STUDENTS MARKS
 {
     setcourses();
     for (int i = 0; i < clen; i++)
@@ -1609,7 +1609,7 @@ void Course::setstudentmarks(string code, float marks,string rollno)
         }
     }
 }
-void Course::setstudentattendence(string code, float attendence, string rollno)
+void Course::setstudentattendence(string code, float attendence, string rollno)//SETS STUDENTS ATTENDENCE ACCORDING TO COURSE
 {
     setcourses();
     for (int i = 0; i < clen; i++)
@@ -1637,7 +1637,7 @@ void Course::setstudentattendence(string code, float attendence, string rollno)
         }
     }
 }
-void Course::setcourses()
+void Course::setcourses()                                                      //READS DATA FROM ORIGINAL COURSE FILE AND SETS COURSES ARRAY IN COURSES CLASS 
 {
     string c;
     string n;
@@ -1666,7 +1666,7 @@ void Course::setcourses()
     }
     infile.close();
 }
-int Course::check(string code)
+int Course::check(string code)                                                 //CHECKS CAPACITY AND COURSE IF IT EXISTS
 {
     setcourses();
     for (int i = 0; i < clen; i++)
@@ -1685,7 +1685,7 @@ int Course::check(string code)
     }
     return 0;
 }
-int Course::checkstudent(string rollnumber, string code)
+int Course::checkstudent(string rollnumber, string code)                       //CHECKS IF CERTAIN STUDENT EXISTS IN CERTAIN COURSE 
 {
     setcourses();
     int see = 0;
@@ -1710,7 +1710,7 @@ int Course::checkstudent(string rollnumber, string code)
     }
     return see;
 }
-void Course::cadd(Course& obj)
+void Course::cadd(Course& obj)                                                 // ADDS COURSE TO COURSES FILE
 {
     setcourses();
     capacity = 0;
@@ -1755,7 +1755,7 @@ void Course::cadd(Course& obj)
 
     Filehandler::courseadd(obj.code, obj.coursename, obj.Instructor, obj.capacity, obj.credits);
 }
-void Course::setstudentfilemars(string code, string rollno, string edit)
+void Course::setstudentfilemars(string code, string rollno, string edit)        // SETS MARKS AND ATTENDENCE FOR ROLL NUMBER FILE
 {
     string textfile = rollno;
     string text = ".txt";
@@ -1777,7 +1777,7 @@ void Course::setstudentfilemars(string code, string rollno, string edit)
         }
     }
 }
-void Course::removestudent(string rollno)
+void Course::removestudent(string rollno)                                       //REMOVES STUDENT FROMM COURSES COMPLETELY
 {
     string text = ".txt";
     setcourses();
@@ -1839,7 +1839,7 @@ void Course::removestudent(string rollno)
         }
     }
 }
-void Course::removestudentone(string rollno,string code)
+void Course::removestudentone(string rollno,string code)                        //REMOVES STUDENT FROM ONE COURSE
 {
     string text = ".txt";
     setcourses();
@@ -1904,7 +1904,7 @@ void Course::removestudentone(string rollno,string code)
         }
     }
 }
-void Course::editstudentdetail(string rollno, int age, string edit, int op)
+void Course::editstudentdetail(string rollno, int age, string edit, int op)     // EDITS STUDENT DETAIL AND FITS IT IN COURSE DETAIL FOR STUDENTS
 {
     string text = ".txt";
     setcourses();
@@ -1939,14 +1939,14 @@ void Course::editstudentdetail(string rollno, int age, string edit, int op)
         }
     }
 }
-void Course::display()
+void Course::display()                                                          // DISPLAYS COURSES
 {
     Filehandler::coursedisplay();
 }
 
 
                                    //SYSTEM CLASS FUNCTIONS
-void System::Menu()
+void System::Menu()                                                            // THE MENU CONSOLE
 {
     int choice1 = 0;
     cout << "1- Enroll a student.\n";
@@ -1993,7 +1993,7 @@ void System::Menu()
         system("cls");                                          //exiting
     }
 }
-void System::enroll()
+void System::enroll()                                                          // ENROLLMENT FOR STUDENTS
 {
     cout << "1- Display Already Enrolled Students.\n";
     cout << "2- Add a Student.\n";
