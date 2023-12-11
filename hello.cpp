@@ -20,10 +20,12 @@ public:
     void coursedisplay();
     void studentcourse(string textfile, string name, string code, string instructor, int credits, int capacity, float marks, float attendence);
     void studentcoursedisplay(string textfile);
-    void coursestudentfile(string textfile,string rollno,string name,int age,string contactnumber,float attendence,float marks);
+    void coursestudentfile(string textfile, string rollno, string name, int age, string contactnumber, float attendence, float marks);
     void clearfile(string textfile);
-    void updatecourse(Course  &obj);
-    void displaycoursestudents(string textfile,string cname);
+    void updatecourse(Course& obj);
+    void displaycoursestudents(string textfile, string cname);
+    int studentcredithour(string textfile);
+    int returncredithour(string textfile);
     int checkcoursecode1(string& coursecode)//CHECKS COURSES CODE FROM MAIN FILE
     {
         ifstream infile("nCourses.txt");
@@ -166,7 +168,7 @@ public:
     int check(string rollnumber);
     void coursesdisplay(string rollnumber);
     void setstudentscourses(string rollnumber);
-    int checkcourse(string rollnumber,string code);
+    int checkcourse(string rollnumber, string code);
     static void ssizeinc() //student size increment
     {
         ssize++;
@@ -175,7 +177,7 @@ public:
     {
         ssize--;
     }
-                                      //SETTERS AND GETTERS
+    //SETTERS AND GETTERS
     void setname(string name)
     {
         this->name = name;
@@ -282,7 +284,7 @@ public:
     {
         clen++;
     }
-                                  //SETTERS AND GETTERS
+    //SETTERS AND GETTERS
     string getcode()
     {
         return code;
@@ -323,20 +325,20 @@ public:
     {
         this->capacity = capacity;
     }
- 
+
     void setcourses();
     int check(string code);
     void cadd(Course& obj);
     void display();
-    void studentadd(string code,Student &obj);
+    void studentadd(string code, Student& obj);
     void setcoursesstudent(string textfile);
     int checkstudent(string rollnumber, string code);
     int checkcoursehasstudent(string code);
     void displaycoursestudent(string coursecode);
-    void setstudentmarks(string code, float marks,string rollno);
+    void setstudentmarks(string code, float marks, string rollno);
     void setstudentattendence(string code, float attendence, string rollno);
     void editstudentdetail(string rollno, int age, string edit, int op);
-    void setstudentfilemars(string code, string rollno,string edit);
+    void setstudentfilemars(string code, string rollno, string edit);
     void removestudent(string rollno);
     void removestudentone(string rollno, string code);
 };
@@ -354,18 +356,18 @@ public:
             cin >> choice;
         }
     }
-    bool isnumeric(string &name)//checking digits and words
+    bool isnumeric(string& name)//checking digits and words
     {
         for (char c : name)
         {
-            if (!isdigit(c)) 
+            if (!isdigit(c))
             {
                 return false;
             }
         }
         return true;
     }
-    bool isnonnumeric(string &str)//checking digits and words)
+    bool isnonnumeric(string& str)//checking digits and words)
     {
         for (char c : str)
         {
@@ -379,7 +381,7 @@ public:
     bool checkname(string& name)//checking if correct input for name
     {
         int space = 0;
-        for (char c : name) 
+        for (char c : name)
         {
             if (c == ' ')
             {
@@ -390,7 +392,7 @@ public:
     }
     void getvalidname(string& name)//getting a valid name from user if wrong input
     {
-        while (!checkname(name) || !isnonnumeric(name)) 
+        while (!checkname(name) || !isnonnumeric(name))
         {
             cout << "ENTER CORRECT NAME (Two words separated by a space): ";
             getline(cin >> ws, name);
@@ -398,15 +400,15 @@ public:
     }
     void getvalidcoursename(string& cname)//getting a valid course name
     {
-        while (!checkname(cname)|| !isnonnumeric(cname))
+        while (!checkname(cname) || !isnonnumeric(cname))
         {
             cout << "ENTER CORRECT COURSE NAME: ";
             getline(cin >> ws, cname);
         }
     }
-    void checkage(int &age)//getting a valid age
+    void checkage(int& age)//getting a valid age
     {
-        while(age > 24 || age < 14)
+        while (age > 24 || age < 14)
         {
             cout << "ENTER CORRECT AGE:";
             cin >> age;
@@ -448,7 +450,7 @@ public:
         }
         return 0;
     }
-    void checkcoursecode(string &roll)//getting a valid course code
+    void checkcoursecode(string& roll)//getting a valid course code
     {
         int ch = existingcoursecode(roll) + Filehandler::checkcoursecode1(roll);
         while (ch != 0)
@@ -456,10 +458,10 @@ public:
             cout << "COURSE CODE TO BIG EXAMPLE(CS201) 5 LETTERS ONLY\n";
             cout << "RE-ENTER CODE:";
             getline(cin >> ws, roll);
-            ch= existingcoursecode(roll) + Filehandler::checkcoursecode1(roll);
+            ch = existingcoursecode(roll) + Filehandler::checkcoursecode1(roll);
         }
     }
-    int existingrollnum(string &roll)//CHECKS EXISTING ROLL NUMBER
+    int existingrollnum(string& roll)//CHECKS EXISTING ROLL NUMBER
     {
         int n = roll.size();
         if (n > 8 || n < 8)
@@ -502,7 +504,7 @@ public:
         }
         return 0;
     }
-    void checkrollnumber(string &roll)//MAKES USER RENTER THE ROLL NUMBER)
+    void checkrollnumber(string& roll)//MAKES USER RENTER THE ROLL NUMBER)
     {
         int ch = existingrollnum(roll) + Filehandler::checkrollnumber(roll);
         while (ch != 0)
@@ -513,25 +515,25 @@ public:
             ch = existingrollnum(roll) + Filehandler::checkrollnumber(roll);
         }
     }
-    void checkcontactnumber(string &contact)//CHECKS CONTACT NUMBER
+    void checkcontactnumber(string& contact)//CHECKS CONTACT NUMBER
     {
         int len = contact.size();
-        while (!isnumeric(contact) || checkname(contact)|| len !=11)
+        while (!isnumeric(contact) || checkname(contact) || len != 11)
         {
             cout << "ENTER CORRECT CONTACT NUMBER ONLY 11 DIGITS AND NO SPACES:";
             getline(cin >> ws, contact);
             len = contact.size();
         }
     }
-    void checkmarksandattendence(float &mars)//CHECKS MARKS AND ATTENDENCE
+    void checkmarksandattendence(float& mars)//CHECKS MARKS AND ATTENDENCE
     {
-        while (mars < 0  || mars > 100)
+        while (mars < 0 || mars > 100)
         {
             cout << "ENTER CORRECT VALUE:";
             cin >> mars;
         }
     }
-    void checkcredits(int &cred)//CHECKS CREDIT HOURS
+    void checkcredits(int& cred)//CHECKS CREDIT HOURS
     {
         while (cred > 3 || cred < 1)
         {
@@ -622,38 +624,64 @@ public:
                 }
                 if (choice2 == 2)
                 {
-                    Course obj;
-                    cout << "ENTER THE COURSE CODE YOU WANT TO REGISTER:";
-                    getline(cin >> ws, coursecode);
-                    int check2 = obj.check(coursecode);
-                    if (check2 == 1)
+                    string text = ".txt";
+                    string textfile = rollno;
+                    textfile.append(text);
+                    int credits = 0;
+                    Filehandler obj5;
+                    credits = obj5.studentcredithour(textfile);
+                    cout << "YOUR TOTAL CREDIT HOURS: " << credits << endl;
+                    if (credits < 21)
                     {
-                        int check4=Course::checkstudent(rollno, coursecode);
-                        if (check4 == 0)
+                        Course obj;
+                        cout << "ENTER THE COURSE CODE YOU WANT TO REGISTER:";
+                        getline(cin >> ws, coursecode);
+                        int ncred =0;
+                        ncred= obj5.returncredithour(coursecode);
+                        if (credits + ncred <= 21)
                         {
-                            Student obj1(rollno);
-                            Course::studentadd(coursecode, obj1);
-                            Course obj(coursecode);
-                            Student::Register(rollno, obj);
-                            system("cls");
+                            int check2 = obj.check(coursecode);
+                            if (check2 == 1)
+                            {
+                                int check4 = Course::checkstudent(rollno, coursecode);
+                                if (check4 == 0)
+                                {
+                                    Student obj1(rollno);
+                                    Course::studentadd(coursecode, obj1);
+                                    Course obj(coursecode);
+                                    Student::Register(rollno, obj);
+                                    system("cls");
+                                }
+                                else
+                                {
+                                    cout << "STUDENT ALREADY REGISTERED\n";
+                                    moveon();
+                                }
+                            }
+                            else if (check2 == 2)
+                            {
+                                cout << "CAPACITY FULL OF COURSE\n";
+                                moveon();
+                            }
+                            else
+                            {
+                                cout << "NO SUCH COURSE EXISTS\n";
+                                moveon();
+                            }
                         }
                         else
                         {
-                            cout << "STUDENT ALREADY REGISTERED\n";
+                            cout << "CREDIT HOURS EXCEEDING 21\n";
                             moveon();
                         }
                     }
-                    else if (check2 == 2)
-                    {
-                        cout << "CAPACITY FULL OF COURSE\n";
-                        moveon();
-                    }
                     else
                     {
-                        cout << "NO SUCH COURSE EXISTS\n";
+                        cout << "CREDIT HOURS LIMIT FULL\n";
                         moveon();
                     }
                 }
+
                 else
                 {
                     system("cls");
@@ -692,7 +720,7 @@ public:
             getline(cin >> ws, coursecode);
             int check2 = obj.check(coursecode);
             system("cls");
-            if (check2 == 1|| check2==2)
+            if (check2 == 1 || check2 == 2)
             {
                 Course::displaycoursestudent(coursecode);
             }
@@ -805,7 +833,7 @@ public:
                 int see = Student::checkcourse(rollno, coursecode);
                 if (see == 1)
                 {
-                    Course::removestudentone(rollno,coursecode);
+                    Course::removestudentone(rollno, coursecode);
                     Course::setstudentfilemars(coursecode, rollno, rollno);
                     cout << "COURSE DROPPED\n";
                 }
@@ -928,7 +956,7 @@ void moveon()
         a = _getch();
     }
 }
-                                                 //FILE HANDLER FUNCTIONS DUE TO FORWARD DECLERATION
+//FILE HANDLER FUNCTIONS DUE TO FORWARD DECLERATION
 void Filehandler::enroll(string name, string rollno, string contactno, int age) // ADDS STUDENT TO TOTAL STUDENT FILE
 {
     fstream outfile("nstudents.txt", ios::app);
@@ -979,23 +1007,27 @@ void Filehandler::coursedisplay()                                               
         {
             cout << code << "\t" << name << " " << nname << setw(10) << instructor << " " << instructors << "\t\t" << credits << "\t" << cap << endl;
         }
-        else
+        if(len<15 && len>7)
         {
             cout << code << "\t" << name << " " << nname << "\t       " << instructor << " " << instructors << "\t\t" << credits << "\t" << cap << endl;
+        }
+        else if(len<=7)
+        {
+            cout << code << "\t" << name << " " << nname << setfill(' ') << setw(20) << instructor << " " << instructors << "\t\t" << credits << "\t" << cap << endl;
         }
     }
     infile.close();
 }
-void Filehandler::studentcourse(string textfile, string name, string code, string instructor,int credits,int capacity,float marks,float attendence)
+void Filehandler::studentcourse(string textfile, string name, string code, string instructor, int credits, int capacity, float marks, float attendence)
 {
     fstream outfile(textfile, ios::app);
-    outfile << code << "\t" << name << "\t\t" <<instructor<<"\t\t"<<credits<<"\t\t"<< capacity <<"\t\t"<<marks<<"\t\t"<<attendence<< endl;
+    outfile << code << "\t" << name << "\t\t" << instructor << "\t\t" << credits << "\t\t" << capacity << "\t\t" << marks << "\t\t" << attendence << endl;
     outfile.close();
 }                                                                                //ADDS STUDENTS FILE REGISTERED COURSES
 void Filehandler::studentcoursedisplay(string textfile)                          //DISPLAYS STUDENTS FILES REGISTERED COURSES
 {
     ifstream infile(textfile);
-    cout << "CODE" << "\t" << "NAME" << "\t\t\t" << "INSTRUCTOR" << "\t" << "CREDITS" << "\t\t" << "MARKS"<<"\t"<<"ATTENDENCE\n";
+    cout << "CODE" << "\t" << "NAME" << "\t\t\t\t" << "INSTRUCTOR" << "\t" << "CREDITS" << "\t\t" << "MARKS" << "\t" << "ATTENDENCE\n";
     string name, code, instructor, nname;
     int credits;
     int cap;
@@ -1003,26 +1035,60 @@ void Filehandler::studentcoursedisplay(string textfile)                         
     float attend;
     string insf;
     string insl;
-    while (infile >> code >> name >> nname>>insf>>insl>>credits>>cap>>mar>>attend)
+    while (infile >> code >> name >> nname >> insf >> insl >> credits >> cap >> mar >> attend)
     {
         int len = name.size();
         len += nname.size();
 
         if (len > 15)
         {
-            cout << code << "\t" << name << " " << nname << "\t\t" <<insf <<" "<<insl<<"\t   " << credits << "\t\t" << mar << "\t" << attend <<"%" << endl;
+            cout << code << "\t" << name << " " << nname << "\t\t" << insf << " " << insl << "\t   " << credits << "\t\t" << mar << "\t" << attend << "%" << endl;
         }
         else
         {
-            cout << code << "\t" << name << " " << nname << "\t\t" << insf << " " << insl << "\t   " << credits << "\t\t" << mar <<"\t" <<attend << "%" << endl;
+            cout << code << "\t" << name << " " << nname << "\t\t\t" << insf << " " << insl << "\t   " << credits << "\t\t" << mar << "\t" << attend << "%" << endl;
         }
     }
     infile.close();
 }
+int Filehandler::studentcredithour(string textfile)                              //checks students credit hours
+{
+    ifstream infile(textfile);
+    string name, code, instructor, nname;
+    int credits;
+    int cap;
+    float mar;
+    float attend;
+    string insf;
+    string insl;
+    int tcredits = 0;
+    while (infile >> code >> name >> nname >> insf >> insl >> credits >> cap >> mar >> attend)
+    {
+        tcredits += credits;
+    }
+    infile.close();
+    return tcredits;
+}
+int Filehandler::returncredithour(string coursecode)                               //checks course credit hours
+{
+    ifstream infile("nCourses.txt");
+    string name, code, instructor, nname, instructors;
+    int credits;
+    int cap;
+    while (infile >> code >> name >> nname >> instructor >> instructors >> credits >> cap)
+    {
+        if (code == coursecode)
+        {
+            return credits;
+        }
+    }
+    infile.close();
+    return 0;
+}
 void Filehandler::coursestudentfile(string textfile, string rollno, string name, int age, string contactnumber, float attendence, float marks)
 {
     fstream outfile(textfile, ios::app);
-    outfile << rollno << "\t" << name << "\t" << age << "\t" << contactnumber<<"\t"<<marks<<"\t"<<attendence << endl;
+    outfile << rollno << "\t" << name << "\t" << age << "\t" << contactnumber << "\t" << marks << "\t" << attendence << endl;
     outfile.close();
 }                                                                         // ADDS STUDENT TO A COURSE FILE
 void Filehandler::clearfile(string textfile)                                     //CLEARS A FILE ACCORDING TO THEIR NAME 
@@ -1030,13 +1096,13 @@ void Filehandler::clearfile(string textfile)                                    
     ofstream outfile(textfile, ios::trunc);
     outfile.close();
 }
-void Filehandler::updatecourse(Course &obj)                                      //UPDATES A COURSE
+void Filehandler::updatecourse(Course& obj)                                      //UPDATES A COURSE
 {
-     fstream outfile("nCourses.txt", ios::app);
-     outfile << obj.getcode() << "\t" <<obj.getcoursename() << "\t\t" << obj.getinstructor() << "\t" << obj.getcredits() << "\t" << obj.getcapcity() << endl;
-     outfile.close();
+    fstream outfile("nCourses.txt", ios::app);
+    outfile << obj.getcode() << "\t" << obj.getcoursename() << "\t\t" << obj.getinstructor() << "\t" << obj.getcredits() << "\t" << obj.getcapcity() << endl;
+    outfile.close();
 }
-void Filehandler::displaycoursestudents(string textfile,string cname)            //DISPLAYS STUDENTS OF CERTAIN COURSE
+void Filehandler::displaycoursestudents(string textfile, string cname)            //DISPLAYS STUDENTS OF CERTAIN COURSE
 {
     ifstream infile(textfile);
     cout << cname << endl;
@@ -1044,16 +1110,16 @@ void Filehandler::displaycoursestudents(string textfile,string cname)           
     string name, rollno, contactinfo, sname;
     float mars, attend;
     int age;
-    while (infile >> rollno >> name >> sname >> age >> contactinfo>>mars>>attend)
+    while (infile >> rollno >> name >> sname >> age >> contactinfo >> mars >> attend)
     {
-        cout << rollno << "\t\t" << name << " " << sname << "\t\t" << mars << "\t\t" << attend<<"%" << endl;
+        cout << rollno << "\t\t" << name << " " << sname << "\t\t" << mars << "\t\t" << attend << "%" << endl;
     }
     moveon();
     infile.close();
 
 }
 
-                                                      //STUDENT CLASS FUNCTIONS
+//STUDENT CLASS FUNCTIONS
 void Student::Register(string rollnumber, Course& obj)       //REGISTERS A STUDENT COURSE ACCORDING TO ROLLNUMBER  IN SYSTEM
 {
     setstudents();
@@ -1068,7 +1134,7 @@ void Student::Register(string rollnumber, Course& obj)       //REGISTERS A STUDE
             textfile.append(txt);
             cout << "COURSE REGISTERED.\n";
             csize = Filehandler::studentcoursesize(textfile);
-            if (csize== 0)
+            if (csize == 0)
             {
                 csize = 1;
                 courses1 = new Course[csize];
@@ -1114,7 +1180,7 @@ void Student::Register(string rollnumber, Course& obj)       //REGISTERS A STUDE
                     courses1[l].setcapacity(copycourse[l].getcapcity());
                 }
             }
-            Filehandler::studentcourse(textfile, obj.getcoursename(), obj.getcode(), obj.getinstructor(),obj.getcredits(),obj.getcapcity(),students[i].getmarks(), students[i].getattendence());
+            Filehandler::studentcourse(textfile, obj.getcoursename(), obj.getcode(), obj.getinstructor(), obj.getcredits(), obj.getcapcity(), students[i].getmarks(), students[i].getattendence());
             moveon();
             break;
         }
@@ -1139,7 +1205,7 @@ void Student::setstudentscourses(string rollnumber)          //READS DATA FROM F
     courses1 = new Course[csize];
     ifstream infile(rollnumber);
     int i = 0;
-    while (infile >> c >> n >> nn >> insf >> insl >> cred >> limit>>mars>>attend)
+    while (infile >> c >> n >> nn >> insf >> insl >> cred >> limit >> mars >> attend)
     {
         courses1[i].setcode(c);
         courses1[i].setcredits(cred);
@@ -1350,7 +1416,7 @@ int Student::check(string rollnumber)                                      //CHE
     }
     return 0;
 }
-int Student::checkcourse(string rollnumber,string code)                        //CHECKS IF A STUDENT HAS REGISTERED SUCH COURSE
+int Student::checkcourse(string rollnumber, string code)                        //CHECKS IF A STUDENT HAS REGISTERED SUCH COURSE
 {
     setstudents();
     for (int i = 0; i < ssize; i++)
@@ -1377,7 +1443,7 @@ int Student::checkcourse(string rollnumber,string code)                        /
                     }
                     for (int k = j; k < (csize - 1); k++)
                     {
-                        copycourse[k].setcapacity(courses1[k+1].getcapcity());
+                        copycourse[k].setcapacity(courses1[k + 1].getcapcity());
                         copycourse[k].setcode(courses1[k + 1].getcode());
                         copycourse[k].setcoursename(courses1[k + 1].getcoursename());
                         copycourse[k].setcredits(courses1[k + 1].getcredits());
@@ -1437,7 +1503,7 @@ void Student::coursesdisplay(string rollnumber)                                /
 
 
 
-                                     //COURSES FUNCTIONS
+//COURSES FUNCTIONS
 
 void Course::studentadd(string code, Student& obj)                            //ADDS A STUDENT TO COURSE CLASS
 {
@@ -1446,7 +1512,7 @@ void Course::studentadd(string code, Student& obj)                            //
     {
         if (courses[i].getcode() == code)
         {
-            if(courses[i].capacity ==50)
+            if (courses[i].capacity == 50)
             {
                 cout << "Capacity Full\n";
                 break;
@@ -1462,7 +1528,7 @@ void Course::studentadd(string code, Student& obj)                            //
                 string txt = ".txt";
                 textfile.append(txt);
                 slen = Filehandler::coursestudentsize(textfile);
-                if (slen==0)
+                if (slen == 0)
                 {
                     slen = 1;
                     students1 = new Student[slen + 1];
@@ -1531,7 +1597,7 @@ void Course::setcoursesstudent(string textfile)                               //
     students1 = new Student[slen];
     ifstream infile(textfile);
     int i = 0;
-    while (infile >> rollno1 >> name1 >> sname1 >> age1 >> contactno1>>marks>>attendence)
+    while (infile >> rollno1 >> name1 >> sname1 >> age1 >> contactno1 >> marks >> attendence)
     {
         students1[i].setage(age1);
         students1[i].setcontactno(contactno1);
@@ -1556,7 +1622,7 @@ void Course::displaycoursestudent(string code)                                //
             string textfile = code;
             string txt = ".txt";
             textfile.append(txt);
-            Filehandler::displaycoursestudents(textfile,courses[i].getcoursename());
+            Filehandler::displaycoursestudents(textfile, courses[i].getcoursename());
             break;
         }
     }
@@ -1585,7 +1651,7 @@ int Course::checkcoursehasstudent(string code)                                //
         }
     }
 }
-void Course::setstudentmarks(string code, float marks,string rollno)          //SETS STUDENTS MARKS
+void Course::setstudentmarks(string code, float marks, string rollno)          //SETS STUDENTS MARKS
 {
     setcourses();
     for (int i = 0; i < clen; i++)
@@ -1811,8 +1877,8 @@ void Course::removestudent(string rollno)                                       
                     copystudent[j].setrollnumber(students1[j + 1].getrollnumber());
                     copystudent[j].setage(students1[j + 1].getage());
                     copystudent[j].setcontactno(students1[j + 1].getcontactno());
-                    copystudent[j].setattendence(students1[j+1].getattendence());
-                    copystudent[j].setmarks(students1[j+1].getmarks());
+                    copystudent[j].setattendence(students1[j + 1].getattendence());
+                    copystudent[j].setmarks(students1[j + 1].getmarks());
                 }
                 slen--;
                 delete[] students1;
@@ -1843,7 +1909,7 @@ void Course::removestudent(string rollno)                                       
         }
     }
 }
-void Course::removestudentone(string rollno,string code)                        //REMOVES STUDENT FROM ONE COURSE
+void Course::removestudentone(string rollno, string code)                        //REMOVES STUDENT FROM ONE COURSE
 {
     string text = ".txt";
     setcourses();
@@ -1949,7 +2015,7 @@ void Course::display()                                                          
 }
 
 
-                                   //SYSTEM CLASS FUNCTIONS
+//SYSTEM CLASS FUNCTIONS
 void System::Menu()                                                            // THE MENU CONSOLE
 {
     int choice1 = 0;
