@@ -1,3 +1,4 @@
+CS201	NUMERICAL COM		Waqas Manzoor		3		4		0		85
 CS202	ASSEMBLY LANG		Aleena Imran		4		0		87		92
 CS204	LINEAR ALGEBRA		Mazhar Hussain		3		0		75.2		0
 CS206	DIGITAL DESIGN		Zummar Saad		4		3		87		87

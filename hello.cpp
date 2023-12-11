@@ -24,7 +24,7 @@ public:
     void clearfile(string textfile);
     void updatecourse(Course  &obj);
     void displaycoursestudents(string textfile,string cname);
-    int checkcoursecode1(string& coursecode)
+    int checkcoursecode1(string& coursecode)//CHECKS COURSES CODE FROM MAIN FILE
     {
         ifstream infile("nCourses.txt");
         string name, code, instructor, nname, instructors;
@@ -41,7 +41,7 @@ public:
         infile.close();
         return 0;
     }
-    int checkrollnumber(string roll)
+    int checkrollnumber(string roll)//CHECKS STUDENT ROLL NUMBER FROM MAIN FILE
     {
         ifstream infile("nstudents.txt");
         string name, rollno, contactinfo, sname;
@@ -57,7 +57,7 @@ public:
         infile.close();
         return 0;
     }
-    void read()
+    void read()//READS INFORMATION FROM MANUAL
     {
         ifstream inputfile("info.txt");
         string lin, para;
@@ -68,7 +68,7 @@ public:
         cout << para << endl;
         inputfile.close();
     }
-    int coursestudentsize(string textfile)
+    int coursestudentsize(string textfile)//SETS NUMBER OF STUDENTS IN COURSE FILE
     {
         fstream infile(textfile, ios::in);
         int linecount = 0;
@@ -79,7 +79,7 @@ public:
         }
         return linecount;
     }
-    static int sizeset()
+    static int sizeset()//SETS NUMBER OF STUDENT IN STUDENTS MAIN FILE
     {
         fstream infile("nstudents.txt", ios::in);
         int linecount = 0;
@@ -90,7 +90,7 @@ public:
         }
         return linecount;
     }
-    int studentcoursesize(string textfile)
+    int studentcoursesize(string textfile)//SETS NUMBER OF COURSES IN STUDENTS FILE 
     {
         fstream infile(textfile, ios::in);
         int linecount = 0;
@@ -101,7 +101,7 @@ public:
         }
         return linecount;
     }
-    static int coursesizeset()
+    static int coursesizeset()//SETS COURSES SIZE FROM COURSES MAIN FILE
     {
         fstream infile("nCourses.txt", ios::in);
         int linecount = 0;
@@ -137,7 +137,7 @@ public:
         courses1 = nullptr;
         students = nullptr;
     }
-    Student(string rollnumber)
+    Student(string rollnumber)// SETS AN OBJECT OF STUDENT ACCORDING TO ITS ROLL NUMBER
     {
         setstudents();
         for (int i = 0; i < ssize; i++)
@@ -175,6 +175,7 @@ public:
     {
         ssize--;
     }
+                                      //SETTERS AND GETTERS
     void setname(string name)
     {
         this->name = name;
@@ -223,6 +224,7 @@ public:
     {
         return attendence;
     }
+
 };
 int Student::ssize = 0;
 class Course :public Filehandler
@@ -280,6 +282,7 @@ public:
     {
         clen++;
     }
+                                  //SETTERS AND GETTERS
     string getcode()
     {
         return code;
@@ -320,6 +323,7 @@ public:
     {
         this->capacity = capacity;
     }
+ 
     void setcourses();
     int check(string code);
     void cadd(Course& obj);
@@ -341,7 +345,7 @@ class Validator :public Filehandler
 {
 public:
     Validator() {}
-    void input(int& choice, int ll, int ul)
+    void input(int& choice, int ll, int ul) //input checking
     {
         cin >> choice;
         while (choice<ll || choice >ul)
@@ -350,7 +354,7 @@ public:
             cin >> choice;
         }
     }
-    bool isnumeric(string &name)
+    bool isnumeric(string &name)//checking digits and words
     {
         for (char c : name)
         {
@@ -361,7 +365,7 @@ public:
         }
         return true;
     }
-    bool isnonnumeric(string &str)
+    bool isnonnumeric(string &str)//checking digits and words)
     {
         for (char c : str)
         {
@@ -372,7 +376,7 @@ public:
         }
         return true;
     }
-    bool checkname(string& name)
+    bool checkname(string& name)//checking if correct input for name
     {
         int space = 0;
         for (char c : name) 
@@ -384,7 +388,7 @@ public:
         }
         return space == 1;
     }
-    void getvalidname(string& name)
+    void getvalidname(string& name)//getting a valid name from user if wrong input
     {
         while (!checkname(name) || !isnonnumeric(name)) 
         {
@@ -392,7 +396,7 @@ public:
             getline(cin >> ws, name);
         }
     }
-    void getvalidcoursename(string& cname)
+    void getvalidcoursename(string& cname)//getting a valid course name
     {
         while (!checkname(cname)|| !isnonnumeric(cname))
         {
@@ -400,7 +404,7 @@ public:
             getline(cin >> ws, cname);
         }
     }
-    void checkage(int &age)
+    void checkage(int &age)//getting a valid age
     {
         while(age > 24 || age < 14)
         {
@@ -408,7 +412,7 @@ public:
             cin >> age;
         }
     }
-    int existingcoursecode(string& code)
+    int existingcoursecode(string& code)//getting a valid course code
     {
         int n = code.size();
         if (n > 5 || n < 5)
@@ -444,7 +448,7 @@ public:
         }
         return 0;
     }
-    void checkcoursecode(string &roll)
+    void checkcoursecode(string &roll)//getting a valid course code
     {
         int ch = existingcoursecode(roll) + Filehandler::checkcoursecode1(roll);
         while (ch != 0)
@@ -455,7 +459,7 @@ public:
             ch= existingcoursecode(roll) + Filehandler::checkcoursecode1(roll);
         }
     }
-    int existingrollnum(string &roll)
+    int existingrollnum(string &roll)//CHECKS EXISTING ROLL NUMBER
     {
         int n = roll.size();
         if (n > 8 || n < 8)
@@ -498,7 +502,7 @@ public:
         }
         return 0;
     }
-    void checkrollnumber(string &roll)
+    void checkrollnumber(string &roll)//MAKES USER RENTER THE ROLL NUMBER)
     {
         int ch = existingrollnum(roll) + Filehandler::checkrollnumber(roll);
         while (ch != 0)
@@ -509,7 +513,7 @@ public:
             ch = existingrollnum(roll) + Filehandler::checkrollnumber(roll);
         }
     }
-    void checkcontactnumber(string &contact)
+    void checkcontactnumber(string &contact)//CHECKS CONTACT NUMBER
     {
         int len = contact.size();
         while (!isnumeric(contact) || checkname(contact)|| len !=11)
@@ -519,7 +523,7 @@ public:
             len = contact.size();
         }
     }
-    void checkmarksandattendence(float &mars)
+    void checkmarksandattendence(float &mars)//CHECKS MARKS AND ATTENDENCE
     {
         while (mars < 0  || mars > 100)
         {
@@ -527,7 +531,7 @@ public:
             cin >> mars;
         }
     }
-    void checkcredits(int &cred)
+    void checkcredits(int &cred)//CHECKS CREDIT HOURS
     {
         while (cred > 3 || cred < 1)
         {

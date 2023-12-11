@@ -1,2 +1,3 @@
+CS201	NUMERICAL COM		Waqas Manzoor		3		4		0		87
 CS204	LINEAR ALGEBRA		Mazhar Hussain		3		0		86.2		0
 CS206	DIGITAL DESIGN		Zummar Saad		4		3		84		97
