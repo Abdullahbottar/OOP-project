@@ -1,3 +1,4 @@
+#include <SFML/Graphics.hpp>
 #include <iostream>
 #include <fstream>
 #include <string>
@@ -546,6 +547,7 @@ class System :public Validator, public Student, public Course
 {
 public:
     System() {}
+    void menu1(int a);
     void Menu();                       //MENU OPTION
     void enroll();                     //ENROLLMENT OPTION
     void coursereg()                   //COURSE REGISTRATION OPTION
@@ -627,17 +629,14 @@ public:
                     string text = ".txt";
                     string textfile = rollno;
                     textfile.append(text);
-                    int credits = 0;
-                    Filehandler obj5;
-                    credits = obj5.studentcredithour(textfile);
+                    int credits = Filehandler::studentcredithour(textfile);
                     cout << "YOUR TOTAL CREDIT HOURS: " << credits << endl;
                     if (credits < 21)
                     {
                         Course obj;
                         cout << "ENTER THE COURSE CODE YOU WANT TO REGISTER:";
                         getline(cin >> ws, coursecode);
-                        int ncred =0;
-                        ncred= obj5.returncredithour(coursecode);
+                        int ncred = Filehandler::returncredithour(coursecode);
                         if (credits + ncred <= 21)
                         {
                             int check2 = obj.check(coursecode);
@@ -946,7 +945,7 @@ public:
     }
     ~System() { }
 };
-void moveon()
+void moveon()    //user delay
 {
     char a;
     cout << "PRESS SPACE TO CONTINUE." << endl;
@@ -1007,11 +1006,11 @@ void Filehandler::coursedisplay()                                               
         {
             cout << code << "\t" << name << " " << nname << setw(10) << instructor << " " << instructors << "\t\t" << credits << "\t" << cap << endl;
         }
-        if(len<15 && len>7)
+        if (len < 15 && len>7)
         {
             cout << code << "\t" << name << " " << nname << "\t       " << instructor << " " << instructors << "\t\t" << credits << "\t" << cap << endl;
         }
-        else if(len<=7)
+        else if (len <= 7)
         {
             cout << code << "\t" << name << " " << nname << setfill(' ') << setw(20) << instructor << " " << instructors << "\t\t" << credits << "\t" << cap << endl;
         }
@@ -2016,6 +2015,42 @@ void Course::display()                                                          
 
 
 //SYSTEM CLASS FUNCTIONS
+void System::menu1(int n)
+{
+    system("cls");
+    if (n == 1)
+    {
+        System::enroll();
+    }
+    if (n == 2)
+    {
+        System::coursereg();
+    }
+    if (n == 3)
+    {
+        System::checkattend();
+    }
+    if (n == 4)
+    {
+        System::marksassign();
+    }
+    if (n == 5)
+    {
+        System::coursewith();
+    }
+    if (n == 6)
+    {
+        Validator::read();
+        moveon();
+        system("cls");
+        System::Menu();
+    }
+    if (n == 7)
+    {
+        System::exit();
+        system("cls");
+    }
+}
 void System::Menu()                                                            // THE MENU CONSOLE
 {
     int choice1 = 0;
@@ -2183,10 +2218,130 @@ void System::enroll()                                                          /
 }
 int main()
 {
+    int s;
+    // Create a window
+    sf::RenderWindow window(sf::VideoMode(800, 600), "SFML Window");
+
+    // Create a font for text
+    sf::Font font;
+    if (!font.loadFromFile("Bebar.ttf")) {
+        // Handle font loading error
+        return -1;
+    }
+
+    // Create a text object for the welcome message
+    sf::Text welcomeText("WELCOME TO FLEX", font, 30);
+    welcomeText.setFillColor(sf::Color::Black); // Text color
+    welcomeText.setStyle(sf::Text::Bold);
+
+    // Center the welcome text in the window
+    sf::FloatRect textBounds = welcomeText.getLocalBounds();
+    welcomeText.setPosition((window.getSize().x - textBounds.width) / 2,
+        (window.getSize().y - textBounds.height) / 2);
+
+    // Set the initial background color to white
+    sf::Color bgColor = sf::Color::White;
+
+    // Text for menu options
+    sf::Text menuText;
+    menuText.setFont(font);
+    menuText.setCharacterSize(20);
+    menuText.setFillColor(sf::Color::Green);
+
+    // String to store user input
+    std::string userInput = "";
+
+    while (window.isOpen()) {
+        sf::Event event;
+        while (window.pollEvent(event)) {
+            if (event.type == sf::Event::Closed) {
+                window.close();
+            }
+
+            if (event.type == sf::Event::KeyPressed) {
+                // Change background color to black on any key press
+                bgColor = sf::Color::Black;
+            }
+
+            // Handle text input
+            if (event.type == sf::Event::TextEntered && bgColor == sf::Color::Black) {
+                if (event.text.unicode >= 32 && event.text.unicode <= 126) {
+                    userInput += static_cast<char>(event.text.unicode);
+                }
+                else if (event.text.unicode == 8 && !userInput.empty()) {
+                    userInput.pop_back();
+                }
+            }
+        }
+
+        // Clear the window with the current background color
+        window.clear(bgColor);
+
+        // Draw the welcome text
+        window.draw(welcomeText);
+        if (bgColor == sf::Color::Black) {
+            menuText.setString(
+                "1- Enroll a student.\n"
+                "2- Course Registration.\n"
+                "3- Attendance.\n"
+                "4- Marks.\n"
+                "5- Course withdraw.\n"
+                "6- User Manual\n"
+                "7- Exit\n"
+                "\n\n"
+                "ENTER YOUR CHOICE: " + userInput
+            );
+            // Center the menu text in the window
+            textBounds = menuText.getLocalBounds();
+            menuText.setPosition((window.getSize().x - textBounds.width) / 2,
+                (window.getSize().y - textBounds.height) / 2 + 50);
+            window.draw(menuText);
+        }
+
+        // Display the contents of the window
+        window.display();
+
+        // Check for user input (only if the window is black)
+        if (bgColor == sf::Color::Black) {
+            userInput.clear();
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num1))//option 1
+            {
+                s = 1;
+                window.close();
+            }
+            else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num2))//option 2 
+            {
+                s = 2;
+                window.close();
+            }
+            else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num3))//option 3
+            {
+                s = 3;
+                window.close();
+            }
+            else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num4))//option 4
+            {
+                s = 4;
+                window.close();
+            }
+            else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num5))//option 5
+            {
+                s = 5;
+                window.close();
+            }
+            else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num6))//option 6
+            {
+                s = 6;
+                window.close();
+            }
+            else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num7))//option 7
+            {
+                s = 7;
+                window.close();
+            }
+        }
+    }
     System obj;
-    obj.Menu();
+    obj.menu1(s);
     return 0;
 }
-
-
-
